@@ -21,7 +21,6 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "images.sqlite";
 
 
-
     private static final int DATABASE_VERSION = 1;
 
     public static synchronized SQLiteDatabase getInstance(Context context) {

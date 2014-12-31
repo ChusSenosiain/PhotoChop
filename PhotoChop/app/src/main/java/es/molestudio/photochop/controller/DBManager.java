@@ -2,8 +2,12 @@ package es.molestudio.photochop.controller;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.net.Uri;
+
+import java.util.ArrayList;
 
 import es.molestudio.photochop.model.Category;
 import es.molestudio.photochop.model.Image;
@@ -104,6 +108,37 @@ public class DBManager {
         return idImage;
 
     }
+
+
+    public ArrayList<Image> getImages() {
+
+        String select = "SELECT * FROM image;";
+        ArrayList<Image> images = new ArrayList<Image>();
+
+        SQLiteDatabase db = DBHelper.getInstance(mContext);
+        Cursor result = db.rawQuery(select, null);
+
+        Image image = null;
+
+        if (result.moveToFirst()){
+            do {
+                image = new Image();
+
+                image.setImageId(result.getInt(result.getColumnIndex(CN_IMAGE_ID)));
+                image.setImageUri(Uri.parse(result.getString(result.getColumnIndex(CN_URI))));
+
+                images.add(image);
+
+            }while(result.moveToNext());
+        }
+
+        result.close();
+
+        return images;
+    }
+
+
+
 
 
 }
