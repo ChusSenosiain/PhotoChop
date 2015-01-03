@@ -34,9 +34,9 @@ public class AppUtils {
         }
 
         if(dateString.length() == 19)
-            inputFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.ENGLISH);
+            inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
         if(dateString.length() == 10)
-            inputFormat = new SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH);
+            inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
         if(inputFormat == null) {
             return null;
@@ -52,4 +52,6 @@ public class AppUtils {
 
         return parsed;
     }
+
+
 }

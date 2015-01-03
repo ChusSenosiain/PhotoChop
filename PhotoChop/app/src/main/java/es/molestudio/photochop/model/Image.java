@@ -13,7 +13,7 @@ public class Image implements Serializable {
     private int mImageId;
     private String mImageName;
     private String mImageDescription;
-    private Uri mImageUri;
+    private String mImageUri;
     private Date mImageDate;
     private Double mImageLatitude;
     private Double mImageLongitude;
@@ -47,11 +47,11 @@ public class Image implements Serializable {
     }
 
     public Uri getImageUri() {
-        return mImageUri;
+        return Uri.parse(mImageUri);
     }
 
     public void setImageUri(Uri imageUri) {
-        mImageUri = imageUri;
+        mImageUri = imageUri.toString();
     }
 
     public Date getImageDate() {

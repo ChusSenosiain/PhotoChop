@@ -1,31 +1,29 @@
 package es.molestudio.photochop.controller.fragment;
 
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.Date;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import es.molestudio.photochop.R;
 import es.molestudio.photochop.controller.util.AppUtils;
@@ -35,6 +33,17 @@ import es.molestudio.photochop.model.Image;
  * Created by Chus on 31/12/14.
  */
 public class ImageFragment extends Fragment {
+
+
+    private DisplayImageOptions mDisplayImageOptions = new DisplayImageOptions.Builder()
+            .showImageOnLoading(null)
+            .showImageForEmptyUri(null)
+            .showImageOnFail(null)
+            .cacheInMemory(false)
+            .cacheOnDisk(true)
+            .considerExifParams(true)
+            .imageScaleType(ImageScaleType.EXACTLY)
+            .build();
 
 
     public static final String ARG_IMAGE = "IMAGE";
@@ -66,7 +75,7 @@ public class ImageFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_image, container, false);
 
-        ImageView ivImage = (ImageView) root.findViewById(R.id.image);
+        final ImageView ivImage = (ImageView) root.findViewById(R.id.image);
         TextView tvImageName = (TextView) root.findViewById(R.id.image_name);
         TextView tvImageDate = (TextView) root.findViewById(R.id.image_date);
 
@@ -78,12 +87,24 @@ public class ImageFragment extends Fragment {
         tvImageName.setText(cursor.getString(nameIndex));
         cursor.close();
 
+        ImageLoader.getInstance().displayImage(mImage.getImageUri().toString(), ivImage, mDisplayImageOptions, new SimpleImageLoadingListener() {
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                super.onLoadingComplete(imageUri, view, loadedImage);
+                Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.abc_fade_in);
+                ivImage.setAnimation(anim);
+                anim.start();
+            }
+        });
+
+
+        /*
 
         try {
             ivImage.setImageBitmap(reduceAndRotate(mImage.getImageUri()));
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
 
         return root;
@@ -165,6 +186,8 @@ public class ImageFragment extends Fragment {
         cursor.moveToFirst();
         return cursor.getInt(0);
     }
+
+
 
 
 
