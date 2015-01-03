@@ -2,12 +2,13 @@ package es.molestudio.photochop.model;
 
 import android.net.Uri;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Chus on 31/12/14.
  */
-public class Image {
+public class Image implements Serializable {
 
     private int mImageId;
     private String mImageName;

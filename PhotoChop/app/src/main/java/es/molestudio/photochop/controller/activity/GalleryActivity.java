@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 
@@ -30,17 +31,18 @@ public class GalleryActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_gallery);
+
         ViewPager vpImages = (ViewPager) findViewById(R.id.vp_images);
         ImagesPagerAdapter imagesPagerAdapter = new ImagesPagerAdapter(getSupportFragmentManager());
+        vpImages.setAdapter(imagesPagerAdapter);
 
         mImages = new DBManager(this).getImages();
-
-        vpImages.setAdapter(imagesPagerAdapter);
+        imagesPagerAdapter.notifyDataSetChanged();
 
     }
 
 
-    public class ImagesPagerAdapter extends FragmentPagerAdapter {
+    public class ImagesPagerAdapter extends FragmentStatePagerAdapter {
 
         public ImagesPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -48,10 +50,8 @@ public class GalleryActivity extends ActionBarActivity {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
             Bundle fragmentArgs = new Bundle();
-            fragmentArgs.putInt(ImageFragment.ARG_IMAGE_ID, mImages.get(position).getImageId());
+            fragmentArgs.putSerializable(ImageFragment.ARG_IMAGE, mImages.get(position));
             return ImageFragment.newInstance(fragmentArgs);
         }
 

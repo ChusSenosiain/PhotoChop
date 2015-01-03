@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.Date;
+
 import es.molestudio.photochop.R;
 import es.molestudio.photochop.controller.DBManager;
 import es.molestudio.photochop.model.Image;
@@ -82,6 +84,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         DBManager manager = new DBManager(this);
         Image image = new Image();
         image.setImageUri(imageUri);
+        image.setImageDate(new Date());
         manager.insertImage(image);
     }
 

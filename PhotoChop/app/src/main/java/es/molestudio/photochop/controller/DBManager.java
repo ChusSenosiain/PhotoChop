@@ -7,8 +7,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
+import es.molestudio.photochop.controller.util.AppUtils;
 import es.molestudio.photochop.model.Category;
 import es.molestudio.photochop.model.Image;
 import es.molestudio.photochop.model.SubCategory;
@@ -53,12 +60,10 @@ public class DBManager {
     private ContentValues createContentImage(Image image) {
 
         ContentValues content = new ContentValues();
-        content.put(CN_IMAGE_ID, image.getImageId());
         content.put(CN_NAME, image.getImageName());
         content.put(CN_DESCRIPTION, image.getImageDescription());
         content.put(CN_URI, image.getImageUri().toString());
-        // TODO: almacenar la fecha como string
-        //content.put(CN_DATE, image.getImageDate());
+        content.put(CN_DATE, AppUtils.getStringFormatDate(image.getImageDate()));
         content.put(CN_LAT, image.getImageLatitude());
         content.put(CN_LON, image.getImageLongitude());
         content.put(CN_CAT, image.getImageCategory());
@@ -122,10 +127,12 @@ public class DBManager {
 
         if (result.moveToFirst()){
             do {
+
                 image = new Image();
 
                 image.setImageId(result.getInt(result.getColumnIndex(CN_IMAGE_ID)));
                 image.setImageUri(Uri.parse(result.getString(result.getColumnIndex(CN_URI))));
+                image.setImageDate(AppUtils.getDateFromString(result.getString(result.getColumnIndex(CN_DATE))));
 
                 images.add(image);
 
@@ -136,6 +143,8 @@ public class DBManager {
 
         return images;
     }
+
+
 
 
 
