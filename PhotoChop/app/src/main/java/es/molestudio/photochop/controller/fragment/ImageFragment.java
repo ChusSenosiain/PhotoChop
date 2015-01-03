@@ -92,22 +92,6 @@ public class ImageFragment extends Fragment {
 
     private Bitmap reduceAndRotate(Uri imageUri) throws Exception{
 
-        int rotate = 0;
-
-        int orientation = getOrientation(imageUri);
-
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                rotate = 270;
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                rotate = 180;
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                rotate = 90;
-                break;
-        }
-
         // Reducir el tamaño del bitmap a tratar, puede ser enorme
         // y tira la aplicación al cargarlo
 
@@ -125,29 +109,16 @@ public class ImageFragment extends Fragment {
 
         Bitmap bitmap =  BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imageUri), null, options);
 
-        return bitmap;
-
-        /*
-
         // Se rota la imagen
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         Matrix mtx = new Matrix();
-        mtx.postRotate(rotate);
+        mtx.postRotate(getOrientation(imageUri));
 
-        bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, true);
+        bitmap = Bitmap.createBitmap(bitmap,
+                0, 0, w, h, mtx, true);
 
-        File fichero = new File(Constants.IMAGE_PATH + DateFormat.format("yyyy-MM-dd_kk-mm-ss", new Date().getTime()) + "_custom.jpg");
-
-        FileOutputStream out = new FileOutputStream(fichero);
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
-        out.flush();
-        out.close();
-
-        bitmap.recycle();
-        bitmap = null;
-
-        return fichero.getAbsolutePath();*/
+        return bitmap;
     }
 
 
@@ -176,7 +147,6 @@ public class ImageFragment extends Fragment {
                     && (halfWidth / inSampleSize) > reqWidth) {
                 inSampleSize *= 2;
             }
-
         }
 
         return  inSampleSize;
