@@ -1,48 +1,87 @@
 package es.molestudio.photochop.controller.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.SparseArray;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import es.molestudio.photochop.R;
 import es.molestudio.photochop.controller.DBManager;
 import es.molestudio.photochop.controller.fragment.ImageFragment;
 import es.molestudio.photochop.model.Image;
+import es.molestudio.photochop.model.enumerator.ActionType;
 
 /**
  * Created by Chus on 31/12/14.
  */
-public class GalleryActivity extends ActionBarActivity {
+public class GalleryActivity extends ActionBarActivity implements ImageFragment.OnImageUpdateListener {
 
-
-    private ArrayList<Image> mImages = new ArrayList<Image>();
-
+    private ArrayList<Integer> mImageIds = new ArrayList<Integer>();
+    private ImagesPagerAdapter mImagesPagerAdapter;
+    private ViewPager mImagesViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
+        supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+
+
+        setContentView(R.layout.activity_gallery);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        setContentView(R.layout.activity_gallery);
+        mImagesViewPager = (ViewPager) findViewById(R.id.vp_images);
+        mImagesPagerAdapter = new ImagesPagerAdapter(getSupportFragmentManager());
+        mImagesViewPager.setAdapter(mImagesPagerAdapter);
 
-        ViewPager vpImages = (ViewPager) findViewById(R.id.vp_images);
-        ImagesPagerAdapter imagesPagerAdapter = new ImagesPagerAdapter(getSupportFragmentManager());
-        vpImages.setAdapter(imagesPagerAdapter);
+        mImageIds = new DBManager(this).getImagesIds();
+        mImagesPagerAdapter.notifyDataSetChanged();
 
-        mImages = new DBManager(this).getImages();
-        imagesPagerAdapter.notifyDataSetChanged();
+    }
+
+
+    @Override
+    public void onImageUpdate(Bundle imageUpdated) {
+
+        int position = imageUpdated.getInt(ImageFragment.POSITION);
+
+        ActionType actionType = (ActionType) imageUpdated.getSerializable(ImageFragment.ACTION_TYPE);
+        if (actionType == ActionType.DELETE) {
+
+            mImageIds.remove(position);
+
+            if (mImageIds.size() == 0) {
+                finish();
+                return;
+            }
+
+            mImagesPagerAdapter.notifyDataSetChanged();
+
+            if (position != 0) {
+                mImagesViewPager.setCurrentItem(position - 1, true);
+            } else {
+                mImagesViewPager.setCurrentItem(0);
+            }
+
+        }
 
     }
 
@@ -56,19 +95,27 @@ public class GalleryActivity extends ActionBarActivity {
         @Override
         public Fragment getItem(int position) {
             Bundle fragmentArgs = new Bundle();
-            fragmentArgs.putSerializable(ImageFragment.ARG_IMAGE, mImages.get(position));
+            fragmentArgs.putInt(ImageFragment.ARG_IMAGE_ID, mImageIds.get(position));
+            fragmentArgs.putInt(ImageFragment.ARG_POSITION, position);
             return ImageFragment.newInstance(fragmentArgs);
         }
 
         @Override
         public int getCount() {
-            return mImages.size();
+            return mImageIds.size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             return null;
         }
+
+        @Override
+        public int getItemPosition(Object object){
+            return PagerAdapter.POSITION_NONE;
+        }
+
+
     }
 
 
@@ -82,4 +129,6 @@ public class GalleryActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

@@ -19,6 +19,15 @@ public class Image implements Serializable {
     private Double mImageLongitude;
     private int mImageCategory;
     private int mImageSubCategory;
+    private boolean mFavorite;
+
+    public boolean isFavorite() {
+        return mFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        mFavorite = favorite;
+    }
 
     public Image() {}
 

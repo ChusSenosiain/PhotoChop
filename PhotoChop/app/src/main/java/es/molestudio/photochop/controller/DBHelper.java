@@ -24,7 +24,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     public static synchronized SQLiteDatabase getInstance(Context context) {
-        // Usa siempre el contexto de la apliación y no el de la actividad
+        // Usa always the context of the app and never an activity context
         // See this article for more information: http://bit.ly/6LRzfx
         if (sDb == null) {
             Log.d(TAG, "La BD no esta instanciada");
@@ -51,7 +51,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.beginTransaction();
 
-        db.execSQL("CREATE TABLE \"image\" (\"imageId\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , \"name\" TEXT, \"description\" TEXT, \"uri\" TEXT, \"date\" DATETIME, \"latitude\" DOUBLE, \"longitude\" DOUBLE, \"categoryId\" INTEGER NOT NULL  DEFAULT 0, \"subcategoryId\" INTEGER NOT NULL  DEFAULT 0)");
+        db.execSQL("CREATE TABLE \"image\" (\"imageId\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , \"name\" TEXT, \"description\" TEXT, \"uri\" TEXT, \"date\" DATETIME, \"latitude\" DOUBLE, \"longitude\" DOUBLE, \"categoryId\" INTEGER NOT NULL  DEFAULT 0, \"subcategoryId\" INTEGER NOT NULL  DEFAULT 0, \"favorite\" BOOL NOT NULL  DEFAULT false)");
         db.execSQL("CREATE TABLE \"category\" (\"categoryId\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , \"name\" TEXT, \"description\" TEXT)");
         db.execSQL("CREATE TABLE \"subcategory\" (\"subcategoryId\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , \"categoryId\" INTEGER NOT NULL , \"name\" TEXT NOT NULL , \"description\" TEXT)");
 

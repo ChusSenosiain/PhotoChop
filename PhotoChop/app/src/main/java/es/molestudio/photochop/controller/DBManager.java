@@ -40,6 +40,7 @@ public class DBManager {
     private static final String CN_LON = "longitude";
     private static final String CN_CAT = "categoryId";
     private static final String CN_SUB_CAT = "subcategoryId";
+    private static final String CN_FAVORITE = "favorite";
     // Category table: the rest of the fiels have the same names than CN_NAME and CN_DESCRIPTION
     private static final String CN_CATEGORY_ID = "categoryId";
     // Subcategory table: the rest of the fields have the same names than CN_NAME, CN_DESCRIPTION and CN_CATEGORY_ID
@@ -68,6 +69,7 @@ public class DBManager {
         content.put(CN_LON, image.getImageLongitude());
         content.put(CN_CAT, image.getImageCategory());
         content.put(CN_SUB_CAT, image.getImageSubCategory());
+        content.put(CN_FAVORITE, image.isFavorite());
 
         return content;
 
@@ -133,6 +135,7 @@ public class DBManager {
                 image.setImageId(result.getInt(result.getColumnIndex(CN_IMAGE_ID)));
                 image.setImageUri(Uri.parse(result.getString(result.getColumnIndex(CN_URI))));
                 image.setImageDate(AppUtils.getDateFromString(result.getString(result.getColumnIndex(CN_DATE))));
+                image.setFavorite(result.getInt(result.getColumnIndex(CN_FAVORITE)) == 1);
 
                 images.add(image);
 
@@ -143,6 +146,82 @@ public class DBManager {
 
         return images;
     }
+
+
+    public ArrayList<Integer> getImagesIds() {
+        ArrayList<Integer> imageIds = new ArrayList<Integer>();
+
+        SQLiteDatabase db = DBHelper.getInstance(mContext);
+
+        Cursor result = db.rawQuery("SELECT " + CN_IMAGE_ID + " FROM image;", null);
+
+        if (result.moveToFirst()) {
+            do {
+                imageIds.add(result.getInt(result.getColumnIndex(CN_IMAGE_ID)));
+            } while (result.moveToNext());
+
+        }
+        result.close();
+
+
+        return imageIds;
+    }
+
+
+    public int updateImage(Image image) {
+
+        SQLiteDatabase db = DBHelper.getInstance(mContext);
+
+        db.beginTransaction();
+
+        int numRows = db.update("image", createContentImage(image), CN_IMAGE_ID + "=" + image.getImageId(), null);
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+        return numRows;
+
+    }
+
+
+    public int deleteImage(Image image) {
+
+        SQLiteDatabase db = DBHelper.getInstance(mContext);
+
+        db.beginTransaction();
+
+        int numRows = db.delete("image", CN_IMAGE_ID + "=" + image.getImageId(), null);
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+        return numRows;
+
+    }
+
+    public Image selectImage(Integer imageId) {
+
+        Image image = null;
+
+        SQLiteDatabase db = DBHelper.getInstance(mContext);
+
+        Cursor result = db.rawQuery("SELECT * FROM image WHERE " + CN_IMAGE_ID + "=" + imageId, null);
+
+        if (result.moveToFirst()) {
+
+            image = new Image();
+
+            image.setImageId(result.getInt(result.getColumnIndex(CN_IMAGE_ID)));
+            image.setImageUri(Uri.parse(result.getString(result.getColumnIndex(CN_URI))));
+            image.setImageDate(AppUtils.getDateFromString(result.getString(result.getColumnIndex(CN_DATE))));
+            image.setFavorite(result.getInt(result.getColumnIndex(CN_FAVORITE)) == 1);
+        }
+
+        return image;
+
+
+    }
+
 
 
 

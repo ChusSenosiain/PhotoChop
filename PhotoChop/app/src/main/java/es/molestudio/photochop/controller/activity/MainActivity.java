@@ -2,12 +2,16 @@ package es.molestudio.photochop.controller.activity;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import es.molestudio.photochop.R;
@@ -19,6 +23,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
     private static final int CAPTURE_IMAGE_REQUEST_CODE = 1001;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +54,21 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
+    /**
+     * Go to gallery
+     */
     private void viewGallery() {
         Intent galleryIntent = new Intent(this, GalleryActivity.class);
         startActivity(galleryIntent);
     }
 
 
+    /**
+     * Take a photo
+     */
     private void takePhoto() {
+
+
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, CAPTURE_IMAGE_REQUEST_CODE);
     }
@@ -79,13 +92,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
+    /**
+     * Save the image on BD
+     * @param imageUri
+     */
     private void saveImage(Uri imageUri) {
 
-        DBManager manager = new DBManager(this);
         Image image = new Image();
         image.setImageUri(imageUri);
         image.setImageDate(new Date());
-        manager.insertImage(image);
+        new DBManager(this).insertImage(image);
     }
 
 

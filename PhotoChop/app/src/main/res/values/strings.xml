@@ -2,13 +2,14 @@
 <resources>
 
     <string name="app_name">PhotoChop</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="btn_camera">Camera</string>
     <string name="btn_my_photos">My Photos</string>
     <string name="title_activity_prueba_view_pager">PruebaViewPagerActivity</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+
+    <string name="delete_image">Delete image</string>
+    <string name="delete_image_question">Are you sure you want delete the image?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

@@ -1,38 +1,49 @@
 package es.molestudio.photochop.controller.fragment;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import es.molestudio.photochop.R;
+import es.molestudio.photochop.controller.DBManager;
 import es.molestudio.photochop.controller.util.AppUtils;
 import es.molestudio.photochop.model.Image;
+import es.molestudio.photochop.model.enumerator.ActionType;
 
 /**
  * Created by Chus on 31/12/14.
  */
-public class ImageFragment extends Fragment {
+public class ImageFragment extends Fragment implements View.OnClickListener {
 
 
     private DisplayImageOptions mDisplayImageOptions = new DisplayImageOptions.Builder()
@@ -45,11 +56,28 @@ public class ImageFragment extends Fragment {
             .imageScaleType(ImageScaleType.EXACTLY)
             .build();
 
+    private OnImageUpdateListener mListener;
 
-    public static final String ARG_IMAGE = "IMAGE";
+
+    public interface OnImageUpdateListener {
+        public void onImageUpdate(Bundle imageUpdated);
+    }
+
+    // Fragment Arguments
+    public static final String ARG_IMAGE_ID = "es.molestudio.photochop.controller.fragment.ImageFragment.IMAGE_ID";
+    public static final String ARG_POSITION = "es.molestudio.photochop.controller.fragment.ImageFragment.POSITION";
+
+    // Bundle return value to the OnImageUpdateListener
+    public static final String IMAGE_ID = "es.molestudio.photochop.controller.fragment.ImageFragment.IMAGE_ID";
+    public static final String POSITION = "es.molestudio.photochop.controller.fragment.ImageFragment.POSITION";
+    public static final String ACTION_TYPE = "es.molestudio.photochop.controller.fragment.ImageFragment.ACTION_TYPE";
 
     private Image mImage;
+    private Integer mImageID;
+    private Integer mPosition;
 
+    private ImageView mIvFavorite;
+    private ViewGroup mImageOptions;
 
     public static Fragment newInstance(Bundle args) {
 
@@ -65,7 +93,12 @@ public class ImageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mImage = (Image) getArguments().getSerializable(ARG_IMAGE);
+
+        if (getArguments() != null) {
+            mImageID = getArguments().getInt(ARG_IMAGE_ID, 0);
+            mPosition = getArguments().getInt(ARG_POSITION);
+        }
+
     }
 
 
@@ -73,123 +106,196 @@ public class ImageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
+        ((ActionBarActivity)getActivity()).getSupportActionBar().hide();
+
         View root = inflater.inflate(R.layout.fragment_image, container, false);
 
-        final ImageView ivImage = (ImageView) root.findViewById(R.id.image);
+        ImageView ivImage = (ImageView) root.findViewById(R.id.iv_image);
         TextView tvImageName = (TextView) root.findViewById(R.id.image_name);
         TextView tvImageDate = (TextView) root.findViewById(R.id.image_date);
+        mImageOptions = (LinearLayout) root.findViewById(R.id.image_data_holder);
+        mIvFavorite = (ImageView) root.findViewById(R.id.iv_favorite);
+        ImageView ivDelete = (ImageView) root.findViewById(R.id.iv_delete);
+        ImageView ivEdit = (ImageView) root.findViewById(R.id.iv_edit);
 
-        tvImageDate.setText(AppUtils.getStringFormatDate(mImage.getImageDate()));
-
-        Cursor cursor =  getActivity().getContentResolver().query(mImage.getImageUri(), null, null, null, null);
-        int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-        cursor.moveToFirst();
-        tvImageName.setText(cursor.getString(nameIndex));
-        cursor.close();
-
-        ImageLoader.getInstance().displayImage(mImage.getImageUri().toString(), ivImage, mDisplayImageOptions, new SimpleImageLoadingListener() {
-            @Override
-            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                super.onLoadingComplete(imageUri, view, loadedImage);
-                Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.abc_fade_in);
-                ivImage.setAnimation(anim);
-                anim.start();
-            }
-        });
+        ivImage.setOnClickListener(this);
+        mImageOptions.setOnClickListener(this);
+        mIvFavorite.setOnClickListener(this);
+        ivDelete.setOnClickListener(this);
+        ivEdit.setOnClickListener(this);
 
 
-        /*
+        mImage = new DBManager(getActivity()).selectImage(mImageID);
+        if (mImage != null) {
+            tvImageDate.setText(AppUtils.getStringFormatDate(mImage.getImageDate()));
 
-        try {
-            ivImage.setImageBitmap(reduceAndRotate(mImage.getImageUri()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
+            Cursor cursor =  getActivity().getContentResolver().query(mImage.getImageUri(), null, null, null, null);
+            int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+            cursor.moveToFirst();
+            tvImageName.setText(cursor.getString(nameIndex));
+            cursor.close();
 
+            ImageLoader.getInstance().displayImage(mImage.getImageUri().toString(), ivImage, mDisplayImageOptions, new SimpleImageLoadingListener() {
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    super.onLoadingComplete(imageUri, view, loadedImage);
+                    Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.abc_fade_in);
+                    ((ImageView) view).setAnimation(anim);
+                    anim.start();
+                }
+            });
+
+            checkAsFavorite();
+
+        }
 
         return root;
     }
 
 
-    private Bitmap reduceAndRotate(Uri imageUri) throws Exception{
+    /**
+     * Color the heart with red if the image is checked as favorite
+     * or leave the heart with its original color if not
+     */
+    private void checkAsFavorite() {
 
-        // Reducir el tamaño del bitmap a tratar, puede ser enorme
-        // y tira la aplicación al cargarlo
+        if (mImage.isFavorite()) {
 
-        DisplayMetrics metrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            int resource = R.drawable.ic_action_favorite;
 
-        // Leer dimensiones y tipo
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imageUri), null, options);
+            Drawable selectedDrawable = getResources().getDrawable(resource).getConstantState().newDrawable();
+            selectedDrawable.mutate();
+            selectedDrawable.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
 
-        // Le doy las dimensiones en función de la pantalla del dispositivo / 2
-        options.inSampleSize = calculateInSampleSize(options, metrics.widthPixels / 2, metrics.heightPixels / 2);
-        options.inJustDecodeBounds = false;
+            mIvFavorite.setImageDrawable(selectedDrawable);
 
-        Bitmap bitmap =  BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imageUri), null, options);
+        } else {
+            mIvFavorite.setImageResource(R.drawable.ic_action_favorite);
+        }
 
-        // Se rota la imagen
-        int w = bitmap.getWidth();
-        int h = bitmap.getHeight();
-        Matrix mtx = new Matrix();
-        mtx.postRotate(getOrientation(imageUri));
-
-        bitmap = Bitmap.createBitmap(bitmap,
-                0, 0, w, h, mtx, true);
-
-        return bitmap;
     }
 
 
     /**
-     * Calcula la escala de la imagen en función del with y heigth requeridos
-     * @param options
-     * @param reqWidth
-     * @param reqHeight
-     * @return inSampleSize
+     * Hide and show action bar and image options
      */
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
+    private void showActions() {
 
-        if (height > reqHeight || width > reqWidth) {
+        ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
 
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
+        if (actionBar.isShowing()) {
+            actionBar.hide();
+            Animation hideImageOptions = AnimationUtils.loadAnimation(getActivity(), R.anim.bottom_down);
+            mImageOptions.startAnimation(hideImageOptions);
+            mImageOptions.setVisibility(View.GONE);
+        } else {
+            actionBar.show();
+            Animation showImageOptions = AnimationUtils.loadAnimation(getActivity(), R.anim.bottom_up);
+            mImageOptions.startAnimation(showImageOptions);
+            mImageOptions.setVisibility(View.VISIBLE);
+        }
+    }
 
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
+
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.iv_image:
+                showActions();
+                break;
+            case R.id.iv_delete:
+                showDeleteImageDialog();
+                break;
+            case R.id.iv_favorite:
+                tagImageAsFavorite();
+                break;
+            case R.id.iv_edit:
+                showEditDialog();
+                break;
+
+        }
+    }
+
+    private void showEditDialog() {
+
+    }
+
+
+    /**
+     *  Shows a question dialog to ask if the user really wants to delete the image
+     */
+    private void showDeleteImageDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(getActivity().getString(R.string.delete_image_question))
+                .setTitle(getActivity().getString(R.string.delete_image));
+
+        builder.setPositiveButton(getActivity().getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteImage();
+            }
+        });
+
+        builder.setNegativeButton(getActivity().getString(R.string.no), null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+
+    }
+
+    /**
+     * Delete image on db and notify to the listener that the image
+     * was deleted
+     */
+    private void deleteImage() {
+        int result = new DBManager(getActivity()).deleteImage(mImage);
+        if (result > 0) {
+            // Delete the image in the image list of the GalleryActivity
+            if (mListener != null) {
+                Bundle imageUpdated = new Bundle();
+                imageUpdated.putInt(IMAGE_ID, mImage.getImageId());
+                imageUpdated.putInt(POSITION, mPosition);
+                imageUpdated.putSerializable(ACTION_TYPE, ActionType.DELETE);
+                mListener.onImageUpdate(imageUpdated);
             }
         }
-
-        return  inSampleSize;
     }
 
+    /**
+     * Update the image's favorite field on bd and update the view
+     */
+    private void tagImageAsFavorite() {
 
-    public int getOrientation(Uri imageUri) {
+        mImage.setFavorite(!mImage.isFavorite());
+        int result = new DBManager(getActivity()).updateImage(mImage);
 
-        Cursor cursor = getActivity().getContentResolver().query(imageUri,
-                new String[] { MediaStore.Images.ImageColumns.ORIENTATION }, null, null, null);
-
-        if (cursor.getCount() != 1) {
-            return -1;
+        // If the result is > 0, update the view
+        if (result > 0) {
+            checkAsFavorite();
+        // If the result is <= 0 (update failed) return image to the older state
+        } else {
+            mImage.setFavorite(!mImage.isFavorite());
         }
-
-        cursor.moveToFirst();
-        return cursor.getInt(0);
     }
 
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnImageUpdateListener) activity;
+        } catch (Exception e) {}
+    }
 
-
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 
 
 }
