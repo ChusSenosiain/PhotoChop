@@ -7,13 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import es.molestudio.photochop.controller.util.AppUtils;
 import es.molestudio.photochop.model.Category;
@@ -23,7 +17,7 @@ import es.molestudio.photochop.model.SubCategory;
 /**
  * Created by Chus on 31/12/14.
  */
-public class DBManager {
+public class DBManager implements IDataStorage {
 
     ///////////////////////////////////////////////////////////////////////////////
     /////                   CRUD OPERATIONS                                  /////
@@ -101,6 +95,7 @@ public class DBManager {
     }
 
 
+    @Override
     public long insertImage(Image image) throws SQLiteException{
 
         Long idImage;
@@ -116,7 +111,7 @@ public class DBManager {
 
     }
 
-
+    @Override
     public ArrayList<Image> getImages() {
 
         String select = "SELECT * FROM image;";
@@ -147,7 +142,7 @@ public class DBManager {
         return images;
     }
 
-
+    @Override
     public ArrayList<Integer> getImagesIds() {
         ArrayList<Integer> imageIds = new ArrayList<Integer>();
 
@@ -167,7 +162,7 @@ public class DBManager {
         return imageIds;
     }
 
-
+    @Override
     public int updateImage(Image image) {
 
         SQLiteDatabase db = DBHelper.getInstance(mContext);
@@ -183,7 +178,7 @@ public class DBManager {
 
     }
 
-
+    @Override
     public int deleteImage(Image image) {
 
         SQLiteDatabase db = DBHelper.getInstance(mContext);
@@ -199,6 +194,7 @@ public class DBManager {
 
     }
 
+    @Override
     public Image selectImage(Integer imageId) {
 
         Image image = null;
@@ -219,14 +215,7 @@ public class DBManager {
 
         return image;
 
-
     }
-
-
-
-
-
-
 
 
 }

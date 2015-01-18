@@ -1,29 +1,21 @@
 package es.molestudio.photochop.controller.activity;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.SparseArray;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
 
 import es.molestudio.photochop.R;
-import es.molestudio.photochop.controller.DBManager;
+import es.molestudio.photochop.controller.DataStorage;
 import es.molestudio.photochop.controller.fragment.ImageFragment;
-import es.molestudio.photochop.model.Image;
 import es.molestudio.photochop.model.enumerator.ActionType;
 
 /**
@@ -52,7 +44,7 @@ public class GalleryActivity extends ActionBarActivity implements ImageFragment.
         mImagesPagerAdapter = new ImagesPagerAdapter(getSupportFragmentManager());
         mImagesViewPager.setAdapter(mImagesPagerAdapter);
 
-        mImageIds = new DBManager(this).getImagesIds();
+        mImageIds = DataStorage.getDataStorage(this).getImagesIds();
         mImagesPagerAdapter.notifyDataSetChanged();
 
     }

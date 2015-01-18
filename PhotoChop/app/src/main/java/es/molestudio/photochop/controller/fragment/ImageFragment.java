@@ -5,26 +5,20 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,7 +29,7 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import es.molestudio.photochop.R;
-import es.molestudio.photochop.controller.DBManager;
+import es.molestudio.photochop.controller.DataStorage;
 import es.molestudio.photochop.controller.util.AppUtils;
 import es.molestudio.photochop.model.Image;
 import es.molestudio.photochop.model.enumerator.ActionType;
@@ -125,7 +119,8 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
         ivEdit.setOnClickListener(this);
 
 
-        mImage = new DBManager(getActivity()).selectImage(mImageID);
+        mImage = DataStorage.getDataStorage(getActivity()).selectImage(mImageID);
+
         if (mImage != null) {
             tvImageDate.setText(AppUtils.getStringFormatDate(mImage.getImageDate()));
 
@@ -252,7 +247,8 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
      * was deleted
      */
     private void deleteImage() {
-        int result = new DBManager(getActivity()).deleteImage(mImage);
+
+        int result = DataStorage.getDataStorage(getActivity()).deleteImage(mImage);
         if (result > 0) {
             // Delete the image in the image list of the GalleryActivity
             if (mListener != null) {
@@ -271,7 +267,8 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
     private void tagImageAsFavorite() {
 
         mImage.setFavorite(!mImage.isFavorite());
-        int result = new DBManager(getActivity()).updateImage(mImage);
+
+        int result = DataStorage.getDataStorage(getActivity()).updateImage(mImage);
 
         // If the result is > 0, update the view
         if (result > 0) {
