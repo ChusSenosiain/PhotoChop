@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "es.molestudio.photochop"
-        minSdkVersion 9
+        minSdkVersion 14
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -22,9 +22,15 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.2'
-    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
 
     compile 'com.google.android.gms:play-services:6.5.87'
+
+    // External libraries
+    // UIL: for load images and show it in the correct resolution
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
+    // Floating action button
+    compile 'com.getbase:floatingactionbutton:1.8.0'
+
 
 
 }

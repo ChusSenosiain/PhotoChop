@@ -6,11 +6,11 @@
         <item name="android:windowBackground">@color/background_window</item>
         <item name="actionBarStyle">@style/MyActionBar</item>
         <!-- Set AppCompat’s color theming attrs -->
-        <item name="colorPrimary">@color/color_primary</item>
-        <item name="colorPrimaryDark">@color/color_primary_dark</item>
-        <item name="colorAccent">@color/material_teal</item>
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_primary_color</item>
+        <item name="colorAccent">@color/accent_color</item>
         <item name="windowActionModeOverlay">true</item>
-        <item name="actionModeBackground">@color/color_primary</item>
+        <item name="actionModeBackground">@color/primary_color</item>
     </style>
 
     <style name="AppTheme.TextView" parent="AppTheme">
@@ -55,6 +55,14 @@
    -->
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
+    </style>
+
+
+
+    <!-- Floating action buttons -->
+    <style name="menu_labels_style">
+        <item name="android:background">@drawable/fab_label_background</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
 </resources>

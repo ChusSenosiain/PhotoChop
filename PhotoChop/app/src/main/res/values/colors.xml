@@ -12,12 +12,15 @@
 
 
 
-    <color name="color_primary_dark">#0288D1</color> <!-- blue status bar -->
-    <color name="color_primary">#03A9F4</color> <!-- Action bar color -->
-    <color name="drawer_grey">#616161</color>
-    <color name="floating_action_button">#009688</color>
+    <color name="dark_primary_color">#512DA8</color> <!-- blue status bar -->
+    <color name="primary_color">@color/material_deep_purple</color> <!-- Action bar color -->
+    <color name="light_primary_color">#D1C4E9</color>
+    <color name="accent_color">@color/material_light_green</color>
+    <color name="floating_action_button">@color/accent_color</color>
     <color name="floating_action_button_push">#009688</color>
     <color name="tab_bar_color">#00BCD4</color>
+
+    <color name="drawer_grey">#616161</color>
 
 
     <color name="material_red">#F44336</color>
@@ -40,5 +43,19 @@
     <color name="material_brown">#795548</color>
     <color name="material_grey">#9E9E9E</color>
     <color name="material_blue_grey">#607D8B</color>
+
+
+
+    <!-- Floating Action Buttons -->
+
+    <color name="black_semi_transparent">#B2000000</color>
+    <color name="background">#e5e5e5</color>
+    <color name="half_black">#808080</color>
+    <color name="white">#fafafa</color>
+    <color name="white_pressed">#f1f1f1</color>
+    <color name="pink">#e91e63</color>
+    <color name="pink_pressed">#ec407a</color>
+    <color name="blue_semi_transparent">#805677fc</color>
+    <color name="blue_semi_transparent_pressed">#80738ffe</color>
 
 </resources>

@@ -1,12 +1,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context=".MainActivity"
-                tools:ignore="MergeRootFrame"
-                android:orientation="vertical">
+              xmlns:tools="http://schemas.android.com/tools"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:fab="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/container"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              tools:context=".MainActivity"
+              tools:ignore="MergeRootFrame"
+              android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/tb_toolbar"
@@ -26,27 +27,61 @@
         android:layout_height="match_parent">
 
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:orientation="vertical">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                <Button
+
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/btn_camera"
-                    android:id="@+id/btn_camera"
-                    android:layout_marginBottom="20dp"/>
+                    android:layout_height="match_parent"
+                    android:id="@+id/fragment_holder">
 
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/btn_my_photos"
-                    android:id="@+id/btn_my_photos"
-                    android:layout_gravity="center_horizontal"/>
 
-           </LinearLayout>
+                </RelativeLayout>
+
+
+                <com.getbase.floatingactionbutton.FloatingActionsMenu
+                    android:id="@+id/multiple_actions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    fab:fab_addButtonColorNormal="@color/accent_color"
+                    fab:fab_addButtonColorPressed="@color/white_pressed"
+                    fab:fab_labelStyle="@style/menu_labels_style"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp">
+
+                    <com.getbase.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/btn_import_from_gallery"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        fab:fab_icon="@drawable/ic_view_module_white_24dp"
+                        fab:fab_colorNormal="@color/accent_color"
+                        fab:fab_title="@string/btn_take_photo_title"
+                        fab:fab_colorPressed="@color/white_pressed"/>
+
+                    <com.getbase.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/btn_new_photo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        fab:fab_icon="@drawable/ic_photo_camera_white_24dp"
+                        fab:fab_colorNormal="@color/accent_color"
+                        fab:fab_title="@string/btn_import_image_title"
+                        fab:fab_colorPressed="@color/white_pressed"/>
+
+
+
+                </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+
+            </RelativeLayout>
+
+
+
 
 
             <!-- Drawer -->

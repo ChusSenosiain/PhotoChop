@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.location.Location;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -15,16 +16,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.util.Date;
 
 import es.molestudio.photochop.R;
 import es.molestudio.photochop.controller.DataStorage;
 import es.molestudio.photochop.controller.adapter.ADPDrawer;
+import es.molestudio.photochop.controller.fragment.GridFragment;
 import es.molestudio.photochop.controller.location.MyLocation;
 import es.molestudio.photochop.controller.util.Log;
 import es.molestudio.photochop.model.Image;
@@ -72,6 +75,15 @@ public class MainActivity extends ActionBarActivity
 
         actionBar.setCustomView(view);
 
+        // Show the grid
+        FragmentManager manager = getSupportFragmentManager();
+        if (manager.findFragmentById(R.id.fragment_holder) == null) {
+
+            manager.beginTransaction()
+                    .add(R.id.fragment_holder, GridFragment.newInstance(null))
+                    .commit();
+        }
+
         // Set up the drawer
         // Left Drawer items
         String[] drawerMenuItems = getResources().getStringArray(R.array.drawer_main_items);
@@ -108,11 +120,11 @@ public class MainActivity extends ActionBarActivity
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 
-        Button btnCamera = (Button) findViewById(R.id.btn_camera);
-        Button btnMyPhotos = (Button) findViewById(R.id.btn_my_photos);
+        FloatingActionButton btnCamera = (FloatingActionButton) findViewById(R.id.btn_new_photo);
+        FloatingActionButton btnImportFromGallery = (FloatingActionButton) findViewById(R.id.btn_import_from_gallery);
 
         btnCamera.setOnClickListener(this);
-        btnMyPhotos.setOnClickListener(this);
+        btnImportFromGallery.setOnClickListener(this);
         mDrawerList.setOnItemClickListener(this);
 
     }
@@ -121,12 +133,12 @@ public class MainActivity extends ActionBarActivity
     public void onClick(View v) {
 
         switch (v.getId()) {
-            case R.id.btn_camera:
+            case R.id.btn_new_photo:
                 // Camera intent
                 takePhoto();
                 break;
 
-            case R.id.btn_my_photos:
+            case R.id.btn_import_from_gallery:
                 // Gallery intent
                 viewGallery();
                 break;
