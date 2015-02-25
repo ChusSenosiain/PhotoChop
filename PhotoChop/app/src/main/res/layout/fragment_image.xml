@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="vertical"
-        android:background="#60000000"
+        android:background="@color/image_text_background"
         android:visibility="gone">
 
         <LinearLayout

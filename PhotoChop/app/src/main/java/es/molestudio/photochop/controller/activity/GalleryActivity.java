@@ -8,6 +8,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.Window;
 
@@ -34,8 +35,11 @@ public class GalleryActivity extends ActionBarActivity implements ImageFragment.
 
         supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
-
         setContentView(R.layout.activity_gallery);
+
+        // Set up toolbar as actionbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tb_toolbar);
+        setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

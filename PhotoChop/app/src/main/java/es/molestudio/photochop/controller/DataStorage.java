@@ -7,8 +7,8 @@ import android.content.Context;
  */
 public class DataStorage {
 
-    public static IDataStorage getDataStorage(Context context) {
-        return new DBManager(context);
+    public static IDataManager getDataStorage(Context context) {
+        return new SQLiteManager(context);
     }
 
 }

@@ -17,8 +17,8 @@ public class Image implements Serializable {
     private Date mImageDate;
     private Double mImageLatitude;
     private Double mImageLongitude;
-    private int mImageCategory;
-    private int mImageSubCategory;
+    private Category mImageCategory = new Category();
+    private SubCategory mImageSubCategory = new SubCategory();
     private boolean mFavorite;
 
     public boolean isFavorite() {
@@ -87,19 +87,19 @@ public class Image implements Serializable {
         mImageLongitude = imageLongitude;
     }
 
-    public int getImageCategory() {
+    public Category getImageCategory() {
         return mImageCategory;
     }
 
-    public void setImageCategory(int imageCategory) {
+    public void setImageCategory(Category imageCategory) {
         mImageCategory = imageCategory;
     }
 
-    public int getImageSubCategory() {
+    public SubCategory getImageSubCategory() {
         return mImageSubCategory;
     }
 
-    public void setImageSubCategory(int imageSubCategory) {
+    public void setImageSubCategory(SubCategory imageSubCategory) {
         mImageSubCategory = imageSubCategory;
     }
 }

@@ -3,11 +3,13 @@ package es.molestudio.photochop.controller.fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
@@ -30,6 +32,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 
 import es.molestudio.photochop.R;
 import es.molestudio.photochop.controller.DataStorage;
+import es.molestudio.photochop.controller.activity.MapActivity;
 import es.molestudio.photochop.controller.util.AppUtils;
 import es.molestudio.photochop.model.Image;
 import es.molestudio.photochop.model.enumerator.ActionType;
@@ -111,12 +114,14 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
         mIvFavorite = (ImageView) root.findViewById(R.id.iv_favorite);
         ImageView ivDelete = (ImageView) root.findViewById(R.id.iv_delete);
         ImageView ivEdit = (ImageView) root.findViewById(R.id.iv_edit);
+        ImageView ivLocalize = (ImageView) root.findViewById(R.id.iv_localize);
 
         ivImage.setOnClickListener(this);
         mImageOptions.setOnClickListener(this);
         mIvFavorite.setOnClickListener(this);
         ivDelete.setOnClickListener(this);
         ivEdit.setOnClickListener(this);
+        ivLocalize.setOnClickListener(this);
 
 
         mImage = DataStorage.getDataStorage(getActivity()).selectImage(mImageID);
@@ -209,6 +214,9 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
             case R.id.iv_edit:
                 showEditDialog();
                 break;
+            case R.id.iv_localize:
+                showMap();
+                break;
 
         }
     }
@@ -240,6 +248,12 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
         dialog.show();
 
 
+    }
+
+    private void showMap() {
+        Intent activityMap = new Intent(getActivity(), MapActivity.class);
+        activityMap.putExtra(MapActivity.IMAGE, mImage);
+        startActivityForResult(activityMap, MapActivity.RQ_LOCATION_SELECTED);
     }
 
     /**
@@ -279,12 +293,30 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+
+            if (requestCode == MapActivity.RQ_LOCATION_SELECTED) {
+                Location location = (Location) data.getSerializableExtra(MapActivity.NEW_LOCATION);
+                mImage.setImageLatitude(location.getLatitude());
+                mImage.setImageLongitude(location.getLongitude());
+
+                DataStorage.getDataStorage(getActivity()).updateImage(mImage);
+
+            }
+        }
+
+    }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
             mListener = (OnImageUpdateListener) activity;
+
         } catch (Exception e) {}
     }
 

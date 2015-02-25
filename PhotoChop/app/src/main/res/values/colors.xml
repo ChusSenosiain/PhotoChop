@@ -1,4 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="ligth_letters">#FFFFFF</color>
+    <color name="background_window">#EEEEEE</color> <!-- Background window color -->
+
+    <color name="dark_grey">#595959</color>
+    <color name="clear_grey">#6e6e6e</color>
+    <color name="icon_grey">#ffababab</color>
+    <color name="divider">#18000000</color>
+    <color name="image_text_background">#60000000</color>
+
+
+
+    <color name="color_primary_dark">#0288D1</color> <!-- blue status bar -->
+    <color name="color_primary">#03A9F4</color> <!-- Action bar color -->
+    <color name="drawer_grey">#616161</color>
+    <color name="floating_action_button">#009688</color>
+    <color name="floating_action_button_push">#009688</color>
+    <color name="tab_bar_color">#00BCD4</color>
+
+
+    <color name="material_red">#F44336</color>
+    <color name="material_pink">#E91E63</color>
+    <color name="material_purple">#9C27B0</color>
+    <color name="material_deep_purple">#673AB7</color>
+    <color name="material_indigo">#3F51B5</color>
+    <color name="material_blue">#2196F3</color>
+    <color name="material_light_blue">#03A9F4</color>
+    <color name="material_cyan">#00BCD4</color>
+    <color name="material_cyan_100">#B2EBF2</color>
+    <color name="material_teal">#009688</color>
+    <color name="material_green">#4CAF50</color>
+    <color name="material_light_green">#8BC34A</color>
+    <color name="material_lime">#CDDC39</color>
+    <color name="material_yellow">#FFEB3B</color>
+    <color name="material_amber">#FFC107</color>
+    <color name="material_orange">#FF9800</color>
+    <color name="material_deep_orange">#FF5722</color>
+    <color name="material_brown">#795548</color>
+    <color name="material_grey">#9E9E9E</color>
+    <color name="material_blue_grey">#607D8B</color>
+
 </resources>

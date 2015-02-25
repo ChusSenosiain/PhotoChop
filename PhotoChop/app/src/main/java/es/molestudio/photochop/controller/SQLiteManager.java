@@ -17,7 +17,7 @@ import es.molestudio.photochop.model.SubCategory;
 /**
  * Created by Chus on 31/12/14.
  */
-public class DBManager implements IDataStorage {
+public class SQLiteManager implements IDataManager {
 
     ///////////////////////////////////////////////////////////////////////////////
     /////                   CRUD OPERATIONS                                  /////
@@ -43,7 +43,7 @@ public class DBManager implements IDataStorage {
 
     private Context mContext;
 
-    public DBManager(Context context) {
+    public SQLiteManager(Context context) {
         mContext = context;
     }
 
@@ -61,8 +61,8 @@ public class DBManager implements IDataStorage {
         content.put(CN_DATE, AppUtils.getStringFormatDate(image.getImageDate()));
         content.put(CN_LAT, image.getImageLatitude());
         content.put(CN_LON, image.getImageLongitude());
-        content.put(CN_CAT, image.getImageCategory());
-        content.put(CN_SUB_CAT, image.getImageSubCategory());
+        content.put(CN_CAT, image.getImageCategory().getCagetoryId());
+        content.put(CN_SUB_CAT, image.getImageSubCategory().getSubCategoryId());
         content.put(CN_FAVORITE, image.isFavorite());
 
         return content;
@@ -95,6 +95,9 @@ public class DBManager implements IDataStorage {
     }
 
 
+    // ---------------------------------------------------------------- //
+    // IMAGE CRUD OPERATIONS
+    // ---------------------------------------------------------------- //
     @Override
     public long insertImage(Image image) throws SQLiteException{
 
@@ -120,19 +123,9 @@ public class DBManager implements IDataStorage {
         SQLiteDatabase db = DBHelper.getInstance(mContext);
         Cursor result = db.rawQuery(select, null);
 
-        Image image = null;
-
         if (result.moveToFirst()){
             do {
-
-                image = new Image();
-
-                image.setImageId(result.getInt(result.getColumnIndex(CN_IMAGE_ID)));
-                image.setImageUri(Uri.parse(result.getString(result.getColumnIndex(CN_URI))));
-                image.setImageDate(AppUtils.getDateFromString(result.getString(result.getColumnIndex(CN_DATE))));
-                image.setFavorite(result.getInt(result.getColumnIndex(CN_FAVORITE)) == 1);
-
-                images.add(image);
+                images.add(createImageFromCursor(result));
 
             }while(result.moveToNext());
         }
@@ -141,6 +134,11 @@ public class DBManager implements IDataStorage {
 
         return images;
     }
+
+
+
+
+
 
     @Override
     public ArrayList<Integer> getImagesIds() {
@@ -204,18 +202,121 @@ public class DBManager implements IDataStorage {
         Cursor result = db.rawQuery("SELECT * FROM image WHERE " + CN_IMAGE_ID + "=" + imageId, null);
 
         if (result.moveToFirst()) {
-
-            image = new Image();
-
-            image.setImageId(result.getInt(result.getColumnIndex(CN_IMAGE_ID)));
-            image.setImageUri(Uri.parse(result.getString(result.getColumnIndex(CN_URI))));
-            image.setImageDate(AppUtils.getDateFromString(result.getString(result.getColumnIndex(CN_DATE))));
-            image.setFavorite(result.getInt(result.getColumnIndex(CN_FAVORITE)) == 1);
+            image = createImageFromCursor(result);
         }
 
         return image;
 
     }
 
+
+    // ---------------------------------------------------------------- //
+    // CATEGORY CRUD OPERATIONS
+    // ---------------------------------------------------------------- //
+    @Override
+    public long insertCategory(Category category) {
+
+        Long idCategory;
+        SQLiteDatabase db = DBHelper.getInstance(mContext);
+        db.beginTransaction();
+
+        idCategory = db.insert("category", null, createContentCategory(category));
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+        return idCategory;
+    }
+
+    @Override
+    public ArrayList<Category> getCategories() {
+
+        String select = "SELECT * FROM category;";
+        ArrayList<Category> categories = new ArrayList<Category>();
+
+        SQLiteDatabase db = DBHelper.getInstance(mContext);
+        Cursor result = db.rawQuery(select, null);
+
+        Category category = null;
+
+        if (result.moveToFirst()){
+            do {
+                category = new Category();
+
+            }while(result.moveToNext());
+        }
+
+        result.close();
+
+        return categories;
+    }
+
+    @Override
+    public int updateCategory(Category category) {
+        return 0;
+    }
+
+    @Override
+    public int deleteCategory(Category category) {
+        return 0;
+    }
+
+    @Override
+    public Category selectCategory(Integer categoryId) {
+        return null;
+    }
+
+
+    // ---------------------------------------------------------------- //
+    // SUBCATEGORY CRUD OPERATIONS
+    // ---------------------------------------------------------------- //
+    @Override
+    public long insertSubCategory(SubCategory subCategory) {
+        return 0;
+    }
+
+    @Override
+    public ArrayList<SubCategory> getSubCategories() {
+        return null;
+    }
+
+    @Override
+    public ArrayList<SubCategory> getSubCategories(Integer categoryId) {
+        return null;
+    }
+
+    @Override
+    public int updateSubCategory(SubCategory subCategory) {
+        return 0;
+    }
+
+    @Override
+    public int deleteSubCategory(SubCategory subCategory) {
+        return 0;
+    }
+
+    @Override
+    public Category selectSubCategory(Integer subCategoryId) {
+        return null;
+    }
+
+
+
+
+
+
+    private Image createImageFromCursor(Cursor cursor) {
+
+        Image image = new Image();
+
+        image.setImageId(cursor.getInt(cursor.getColumnIndex(CN_IMAGE_ID)));
+        image.setImageUri(Uri.parse(cursor.getString(cursor.getColumnIndex(CN_URI))));
+        image.setImageDate(AppUtils.getDateFromString(cursor.getString(cursor.getColumnIndex(CN_DATE))));
+        image.setImageLatitude(cursor.getDouble(cursor.getColumnIndex(CN_LAT)));
+        image.setImageLongitude(cursor.getDouble(cursor.getColumnIndex(CN_LON)));
+        image.setFavorite(cursor.getInt(cursor.getColumnIndex(CN_FAVORITE)) == 1);
+
+        return image;
+    }
 
 }

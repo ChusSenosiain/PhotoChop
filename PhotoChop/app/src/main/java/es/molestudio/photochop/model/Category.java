@@ -1,9 +1,11 @@
 package es.molestudio.photochop.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Chus on 31/12/14.
  */
-public class Category {
+public class Category implements Serializable {
 
     private int mCagetoryId;
     private String mCategoryName;

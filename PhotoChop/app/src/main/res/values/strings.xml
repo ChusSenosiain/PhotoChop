@@ -6,10 +6,26 @@
     <string name="btn_camera">Camera</string>
     <string name="btn_my_photos">My Photos</string>
     <string name="title_activity_prueba_view_pager">PruebaViewPagerActivity</string>
-
     <string name="delete_image">Delete image</string>
     <string name="delete_image_question">Are you sure you want delete the image?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="title_activity_map">MapActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_main_action_bar">PhotoChop</string>
+
+    <!-- Drawer -->
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <!-- Drawer items -->
+    <string-array name="drawer_main_items">
+        <item>Preferences</item>
+        <item>About</item>
+        <item>Logout</item>
+    </string-array>
+
+    <string name="title_activity_activity_test_fragment">ActivityTestFragment</string>
+    <string name="title_activity_image">ImageActivity</string>
 
 </resources>
