@@ -1,130 +1,57 @@
 package es.molestudio.photochop.controller.activity;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
+import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
-
-import java.util.ArrayList;
 
 import es.molestudio.photochop.R;
-import es.molestudio.photochop.controller.DataStorage;
-import es.molestudio.photochop.controller.fragment.ImageFragment;
-import es.molestudio.photochop.model.enumerator.ActionType;
+import es.molestudio.photochop.controller.fragment.GridFragment;
 
-/**
- * Created by Chus on 31/12/14.
- */
-public class GalleryActivity extends ActionBarActivity implements ImageFragment.OnImageUpdateListener {
+public class GalleryActivity extends ActionBarActivity {
 
-    private ArrayList<Integer> mImageIds = new ArrayList<Integer>();
-    private ImagesPagerAdapter mImagesPagerAdapter;
-    private ViewPager mImagesViewPager;
+    public static final Integer RQ_SELECT_IMAGE = 1004;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
-        supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-
         setContentView(R.layout.activity_gallery);
 
-        // Set up toolbar as actionbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tb_toolbar);
-        setSupportActionBar(toolbar);
+        FragmentManager manager = getSupportFragmentManager();
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (manager.findFragmentById(R.id.fragment_holder) == null) {
 
-        mImagesViewPager = (ViewPager) findViewById(R.id.vp_images);
-        mImagesPagerAdapter = new ImagesPagerAdapter(getSupportFragmentManager());
-        mImagesViewPager.setAdapter(mImagesPagerAdapter);
+            Bundle fragmentArg = new Bundle();
+            fragmentArg.putBoolean(GridFragment.ARG_SELECTION, true);
 
-        mImageIds = DataStorage.getDataStorage(this).getImagesIds();
-        mImagesPagerAdapter.notifyDataSetChanged();
+            manager.beginTransaction()
+                    .add(R.id.fragment_holder, GridFragment.newInstance(fragmentArg))
+                    .commit();
+        }
 
     }
 
 
     @Override
-    public void onImageUpdate(Bundle imageUpdated) {
-
-        int position = imageUpdated.getInt(ImageFragment.POSITION);
-
-        ActionType actionType = (ActionType) imageUpdated.getSerializable(ImageFragment.ACTION_TYPE);
-        if (actionType == ActionType.DELETE) {
-
-            mImageIds.remove(position);
-
-            if (mImageIds.size() == 0) {
-                finish();
-                return;
-            }
-
-            mImagesPagerAdapter.notifyDataSetChanged();
-
-            if (position != 0) {
-                mImagesViewPager.setCurrentItem(position - 1, true);
-            } else {
-                mImagesViewPager.setCurrentItem(0);
-            }
-
-        }
-
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_activity_test, menu);
+        return true;
     }
-
-
-    public class ImagesPagerAdapter extends FragmentStatePagerAdapter {
-
-        public ImagesPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Bundle fragmentArgs = new Bundle();
-            fragmentArgs.putInt(ImageFragment.ARG_IMAGE_ID, mImageIds.get(position));
-            fragmentArgs.putInt(ImageFragment.ARG_POSITION, position);
-            return ImageFragment.newInstance(fragmentArgs);
-        }
-
-        @Override
-        public int getCount() {
-            return mImageIds.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return null;
-        }
-
-        @Override
-        public int getItemPosition(Object object){
-            return PagerAdapter.POSITION_NONE;
-        }
-
-
-    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-        if (item.getItemId() == android.R.id.home) {
-            finish();
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-
-
 }

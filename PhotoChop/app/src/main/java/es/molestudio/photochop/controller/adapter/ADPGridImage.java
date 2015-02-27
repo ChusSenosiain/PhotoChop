@@ -45,7 +45,16 @@ public class ADPGridImage extends BaseAdapter {
         if (mImages == null){
             mImages = new ArrayList<Image>();
         }
+    }
 
+    public void appendImages(ArrayList<Image> images) {
+        for (Image image: images) {
+            addImage(image);
+        }
+    }
+
+    public void addImage(Image image) {
+        mImages.add(image);
     }
 
     @Override

@@ -15,6 +15,8 @@ public interface IDataManager {
     // Image
     public long insertImage(Image image);
 
+    public ArrayList<Image> insertImages(ArrayList<Image> images);
+
     public ArrayList<Image> getImages();
 
     public ArrayList<Integer> getImagesIds();

@@ -16,7 +16,6 @@
     <string name="title_activity_activity_test_fragment">ActivityTestFragment</string>
     <string name="title_activity_image">ImageActivity</string>
 
-
     <!-- Drawer -->
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
@@ -31,6 +30,6 @@
     <!-- Main floating action buttons -->
     <string name="btn_import_image_title">"Import from gallery"</string>
     <string name="btn_take_photo_title">Take a photo</string>
-
+    <string name="title_activity_image_details">ImageDetailsActivity</string>
 
 </resources>

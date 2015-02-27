@@ -4,14 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
-import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -32,6 +30,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 
 import es.molestudio.photochop.R;
 import es.molestudio.photochop.controller.DataStorage;
+import es.molestudio.photochop.controller.activity.ImageDetailsActivity;
 import es.molestudio.photochop.controller.activity.MapActivity;
 import es.molestudio.photochop.controller.util.AppUtils;
 import es.molestudio.photochop.model.Image;
@@ -61,6 +60,8 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
     }
 
     // Fragment Arguments
+    public static final String ARG_IMAGE_UPDATEABLE = "es.molestudio.photochop.controller.fragment.ImageFragment.IMAGE_UPDATEABLE";
+    public static final String ARG_IMAGE = "es.molestudio.photochop.controller.fragment.ImageFragment.IMAGE";
     public static final String ARG_IMAGE_ID = "es.molestudio.photochop.controller.fragment.ImageFragment.IMAGE_ID";
     public static final String ARG_POSITION = "es.molestudio.photochop.controller.fragment.ImageFragment.POSITION";
 
@@ -72,6 +73,7 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
     private Image mImage;
     private Integer mImageID;
     private Integer mPosition;
+    private Boolean mIsUpdateable;
 
     private ImageView mIvFavorite;
     private ViewGroup mImageOptions;
@@ -94,6 +96,8 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
         if (getArguments() != null) {
             mImageID = getArguments().getInt(ARG_IMAGE_ID, 0);
             mPosition = getArguments().getInt(ARG_POSITION);
+            mImage = (Image) getArguments().getSerializable(ARG_IMAGE);
+            mIsUpdateable = getArguments().getBoolean(ARG_IMAGE_UPDATEABLE, true);
         }
 
     }
@@ -123,17 +127,13 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
         ivEdit.setOnClickListener(this);
         ivLocalize.setOnClickListener(this);
 
-
-        mImage = DataStorage.getDataStorage(getActivity()).selectImage(mImageID);
+        if (mImage == null) {
+            mImage = DataStorage.getDataStorage(getActivity()).selectImage(mImageID);
+        }
 
         if (mImage != null) {
             tvImageDate.setText(AppUtils.getStringFormatDate(mImage.getImageDate()));
-
-            Cursor cursor =  getActivity().getContentResolver().query(mImage.getImageUri(), null, null, null, null);
-            int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-            cursor.moveToFirst();
-            tvImageName.setText(cursor.getString(nameIndex));
-            cursor.close();
+            tvImageDate.setText(mImage.getImageName());
 
             ImageLoader.getInstance().displayImage(mImage.getImageUri().toString(), ivImage, mDisplayImageOptions, new SimpleImageLoadingListener() {
                 @Override
@@ -212,7 +212,7 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
                 tagImageAsFavorite();
                 break;
             case R.id.iv_edit:
-                showEditDialog();
+                editImage();
                 break;
             case R.id.iv_localize:
                 showMap();
@@ -221,7 +221,11 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void showEditDialog() {
+    private void editImage() {
+
+        Intent imageDetails = new Intent(getActivity(), ImageDetailsActivity.class);
+        imageDetails.putExtra(ImageDetailsActivity.EXTRA_IMAGE_ID, mImage.getImageId());
+        startActivity(imageDetails);
 
     }
 

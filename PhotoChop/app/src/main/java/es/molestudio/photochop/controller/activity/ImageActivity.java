@@ -14,7 +14,7 @@ import es.molestudio.photochop.model.Image;
 
 public class ImageActivity extends ActionBarActivity {
 
-    public static final String IMAGE = "es.molestudio.photochop.controller.activity.ImageActivity.Image";
+    public static final String EXTRA_IMAGE = "es.molestudio.photochop.controller.activity.ImageActivity.Image";
 
     private Image mImage;
 
@@ -31,7 +31,7 @@ public class ImageActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        mImage = (Image) getIntent().getSerializableExtra(IMAGE);
+        mImage = (Image) getIntent().getSerializableExtra(EXTRA_IMAGE);
 
         FragmentManager manager = getSupportFragmentManager();
         if (manager.findFragmentById(R.id.fragment_holder) == null) {

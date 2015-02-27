@@ -31,6 +31,35 @@
     </style>
 
 
+    <!-- TextFields -->
+    <style name="AppTextField" parent="AppTheme"/>
+
+    <!-- Text Field regular -->
+    <style name="AppTextField.Regular" parent="AppTextField">
+        <item name="ats_textFont">regular</item>
+    </style>
+
+    <style name="AppTextField.Regular.Smallest" parent="AppTextField.Regular">
+        <item name="android:textSize">12dp</item>
+    </style>
+    <style name="AppTextField.Regular.Small" parent="AppTextField.Regular">
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="AppTextField.Regular.Medium" parent="AppTextField.Regular">
+        <item name="android:textSize">16dp</item>
+    </style>
+
+    <style name="AppTextField.Regular.Big" parent="AppTextField.Regular">
+        <item name="android:textSize">19dp</item>
+    </style>
+
+    <style name="AppTextField.Regular.Biggest" parent="AppTextField.Regular">
+        <item name="android:textSize">21dp</item>
+    </style>
+
+
+
     <!-- ImageViews -->
     <style name="AppImageView" parent="AppTheme">
         <item name="android:scaleType">centerCrop</item>

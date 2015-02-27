@@ -101,7 +101,7 @@ public class SQLiteManager implements IDataManager {
     @Override
     public long insertImage(Image image) throws SQLiteException{
 
-        Long idImage;
+        long idImage;
         SQLiteDatabase db = DBHelper.getInstance(mContext);
         db.beginTransaction();
 
@@ -112,6 +112,27 @@ public class SQLiteManager implements IDataManager {
 
         return idImage;
 
+    }
+
+
+    @Override
+    public ArrayList<Image> insertImages(ArrayList<Image> images) {
+
+        SQLiteDatabase db = DBHelper.getInstance(mContext);
+        db.beginTransaction();
+        long idImage;
+
+        ArrayList<Image> imagesWithId = new ArrayList<Image>();
+
+        for (Image image: images) {
+            idImage = db.insert("image", null, createContentImage(image));
+            image.setImageId((int) idImage);
+            imagesWithId.add(image);
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+        return imagesWithId;
     }
 
     @Override
@@ -216,7 +237,7 @@ public class SQLiteManager implements IDataManager {
     @Override
     public long insertCategory(Category category) {
 
-        Long idCategory;
+        long idCategory;
         SQLiteDatabase db = DBHelper.getInstance(mContext);
         db.beginTransaction();
 

@@ -61,7 +61,6 @@
                         android:layout_height="wrap_content"
                         fab:fab_icon="@drawable/ic_view_module_white_24dp"
                         fab:fab_colorNormal="@color/accent_color"
-                        fab:fab_title="@string/btn_take_photo_title"
                         fab:fab_colorPressed="@color/white_pressed"/>
 
                     <com.getbase.floatingactionbutton.FloatingActionButton
@@ -70,7 +69,6 @@
                         android:layout_height="wrap_content"
                         fab:fab_icon="@drawable/ic_photo_camera_white_24dp"
                         fab:fab_colorNormal="@color/accent_color"
-                        fab:fab_title="@string/btn_import_image_title"
                         fab:fab_colorPressed="@color/white_pressed"/>
 
 

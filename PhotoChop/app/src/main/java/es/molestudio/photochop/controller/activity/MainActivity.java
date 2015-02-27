@@ -1,10 +1,13 @@
 package es.molestudio.photochop.controller.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,6 +25,7 @@ import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import es.molestudio.photochop.R;
@@ -39,7 +43,8 @@ public class MainActivity extends ActionBarActivity
         MyLocation.ChangeLocationListener {
 
 
-    private static final int CAPTURE_IMAGE_REQUEST_CODE = 1001;
+    private static final int RQ_CAPTURE_IMAGE = 1001;
+    private static final int RQ_SELECT_IMAGE = 1002;
     private Location mLocation;
     private MyLocation mMyLocation;
 
@@ -140,18 +145,20 @@ public class MainActivity extends ActionBarActivity
 
             case R.id.btn_import_from_gallery:
                 // Gallery intent
-                viewGallery();
+                importFromGallery();
                 break;
         }
     }
 
 
     /**
-     * Go to gallery
+     * Go to gallery: the default intent for choose an image doesn't allow to choose multiple images
+     * we have to create a custom selectable gallery
      */
-    private void viewGallery() {
-        Intent galleryIntent = new Intent(this, GalleryActivity.class);
-        startActivity(galleryIntent);
+    private void importFromGallery() {
+
+        Intent imageGallery = new Intent(this, GalleryActivity.class);
+        startActivityForResult(imageGallery, GalleryActivity.RQ_SELECT_IMAGE);
     }
 
 
@@ -160,7 +167,7 @@ public class MainActivity extends ActionBarActivity
      */
     private void takePhoto() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAPTURE_IMAGE_REQUEST_CODE);
+        startActivityForResult(cameraIntent, RQ_CAPTURE_IMAGE);
         mMyLocation = new MyLocation(this, this);
     }
 
@@ -168,20 +175,18 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == CAPTURE_IMAGE_REQUEST_CODE) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-            finishLocationService();
-
-            if (resultCode == RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
+            // Photo
+            if (requestCode == RQ_CAPTURE_IMAGE) {
+                finishLocationService();
                 saveImage(data.getData());
-            } else if (resultCode != RESULT_CANCELED) {
-                // Image capture failed, advise user
-            } else {
-
             }
-
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
+            // Image(s) from gallery
+            else if (requestCode == RQ_SELECT_IMAGE) {
+                saveImages((ArrayList<Image>) data.getSerializableExtra(""));
+            }
         }
 
     }
@@ -197,6 +202,13 @@ public class MainActivity extends ActionBarActivity
         image.setImageUri(imageUri);
         image.setImageDate(new Date());
 
+        // Obtengo el nombre de la imagen
+        Cursor cursor = this.getContentResolver().query(image.getImageUri(), null, null, null, null);
+        cursor.moveToFirst();
+        image.setImageName(cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
+        cursor.close();
+
+
         if (mLocation != null) {
             image.setImageLatitude(mLocation.getLatitude());
             image.setImageLongitude(mLocation.getLongitude());
@@ -208,6 +220,11 @@ public class MainActivity extends ActionBarActivity
         DataStorage.getDataStorage(this).insertImage(image);
 
     }
+
+    private void saveImages(ArrayList<Image> images) {
+        DataStorage.getDataStorage(this).insertImages(images);
+    }
+
 
 
     @Override
