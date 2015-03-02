@@ -61,8 +61,8 @@ public class SQLiteManager implements IDataManager {
         content.put(CN_DATE, AppUtils.getStringFormatDate(image.getImageDate()));
         content.put(CN_LAT, image.getImageLatitude());
         content.put(CN_LON, image.getImageLongitude());
-        content.put(CN_CAT, image.getImageCategory().getCagetoryId());
-        content.put(CN_SUB_CAT, image.getImageSubCategory().getSubCategoryId());
+        content.put(CN_CAT, image.getImageCategory().getId());
+        content.put(CN_SUB_CAT, image.getImageSubCategory().getId());
         content.put(CN_FAVORITE, image.isFavorite());
 
         return content;
@@ -74,9 +74,9 @@ public class SQLiteManager implements IDataManager {
     private ContentValues createContentCategory(Category category) {
 
         ContentValues content = new ContentValues();
-        content.put(CN_CATEGORY_ID, category.getCagetoryId());
-        content.put(CN_NAME, category.getCategoryName());
-        content.put(CN_DESCRIPTION, category.getCategoryDescription());
+        content.put(CN_CATEGORY_ID, category.getId());
+        content.put(CN_NAME, category.getName());
+        content.put(CN_DESCRIPTION, category.getDescription());
 
         return content;
 
@@ -86,10 +86,10 @@ public class SQLiteManager implements IDataManager {
     private ContentValues createContentSubCategory(SubCategory subCategory) {
 
         ContentValues content = new ContentValues();
-        content.put(CN_SUBCATEGORY_ID, subCategory.getSubCategoryId());
+        content.put(CN_SUBCATEGORY_ID, subCategory.getId());
         content.put(CN_CATEGORY_ID, subCategory.getCategoryId());
-        content.put(CN_NAME, subCategory.getSubCaregoryName());
-        content.put(CN_DESCRIPTION, subCategory.getSubCategoryDescription());
+        content.put(CN_NAME, subCategory.getName());
+        content.put(CN_DESCRIPTION, subCategory.getDescription());
 
         return content;
     }

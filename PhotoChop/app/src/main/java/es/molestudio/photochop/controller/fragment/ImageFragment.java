@@ -29,6 +29,7 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import es.molestudio.photochop.R;
+import es.molestudio.photochop.View.AppTextView;
 import es.molestudio.photochop.controller.DataStorage;
 import es.molestudio.photochop.controller.activity.ImageDetailsActivity;
 import es.molestudio.photochop.controller.activity.MapActivity;
@@ -112,8 +113,8 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
         View root = inflater.inflate(R.layout.fragment_image, container, false);
 
         ImageView ivImage = (ImageView) root.findViewById(R.id.iv_image);
-        TextView tvImageName = (TextView) root.findViewById(R.id.image_name);
-        TextView tvImageDate = (TextView) root.findViewById(R.id.image_date);
+        AppTextView tvImageName = (AppTextView) root.findViewById(R.id.image_name);
+        AppTextView tvImageDate = (AppTextView) root.findViewById(R.id.image_date);
         mImageOptions = (LinearLayout) root.findViewById(R.id.image_data_holder);
         mIvFavorite = (ImageView) root.findViewById(R.id.iv_favorite);
         ImageView ivDelete = (ImageView) root.findViewById(R.id.iv_delete);
@@ -132,8 +133,10 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
         }
 
         if (mImage != null) {
-            tvImageDate.setText(AppUtils.getStringFormatDate(mImage.getImageDate()));
-            tvImageDate.setText(mImage.getImageName());
+
+            String timeDate[] = AppUtils.dateToStringInLetters(mImage.getImageDate());
+            tvImageDate.setText(timeDate[0] + " - " + timeDate[1]);
+            tvImageName.setText(mImage.getImageName());
 
             ImageLoader.getInstance().displayImage(mImage.getImageUri().toString(), ivImage, mDisplayImageOptions, new SimpleImageLoadingListener() {
                 @Override
@@ -161,7 +164,7 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
 
         if (mImage.isFavorite()) {
 
-            int resource = R.drawable.ic_action_favorite;
+            int resource = R.drawable.ic_favorite_white_24dp;
 
             Drawable selectedDrawable = getResources().getDrawable(resource).getConstantState().newDrawable();
             selectedDrawable.mutate();
@@ -170,7 +173,7 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
             mIvFavorite.setImageDrawable(selectedDrawable);
 
         } else {
-            mIvFavorite.setImageResource(R.drawable.ic_action_favorite);
+            mIvFavorite.setImageResource(R.drawable.ic_favorite_white_24dp);
         }
 
     }
@@ -183,11 +186,14 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
 
         ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
 
+
+        // Hide
         if (actionBar.isShowing()) {
             actionBar.hide();
             Animation hideImageOptions = AnimationUtils.loadAnimation(getActivity(), R.anim.bottom_down);
             mImageOptions.startAnimation(hideImageOptions);
             mImageOptions.setVisibility(View.GONE);
+        // Show
         } else {
             actionBar.show();
             Animation showImageOptions = AnimationUtils.loadAnimation(getActivity(), R.anim.bottom_up);
@@ -225,7 +231,7 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
 
         Intent imageDetails = new Intent(getActivity(), ImageDetailsActivity.class);
         imageDetails.putExtra(ImageDetailsActivity.EXTRA_IMAGE_ID, mImage.getImageId());
-        startActivity(imageDetails);
+        startActivityForResult(imageDetails, ImageDetailsActivity.RQ_IMAGE_UPDATED);
 
     }
 
@@ -302,14 +308,13 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
-
             if (requestCode == MapActivity.RQ_LOCATION_SELECTED) {
                 Location location = (Location) data.getSerializableExtra(MapActivity.NEW_LOCATION);
                 mImage.setImageLatitude(location.getLatitude());
                 mImage.setImageLongitude(location.getLongitude());
-
                 DataStorage.getDataStorage(getActivity()).updateImage(mImage);
-
+            } else if (requestCode == ImageDetailsActivity.RQ_IMAGE_UPDATED) {
+                mImage = (Image) data.getSerializableExtra(ImageDetailsActivity.IMAGE_UPDATED);
             }
         }
 

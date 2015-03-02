@@ -1,7 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:fab="http://schemas.android.com/apk/res-auto"
               android:id="@+id/container"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -48,9 +47,9 @@
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
-                    fab:fab_addButtonColorNormal="@color/accent_color"
-                    fab:fab_addButtonColorPressed="@color/white_pressed"
-                    fab:fab_labelStyle="@style/menu_labels_style"
+                    app:fab_addButtonColorNormal="@color/accent_color"
+                    app:fab_addButtonColorPressed="@color/floating_action_button_push"
+                    app:fab_labelStyle="@style/menu_labels_style"
                     android:layout_marginBottom="16dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginEnd="16dp">
@@ -59,19 +58,17 @@
                         android:id="@+id/btn_import_from_gallery"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        fab:fab_icon="@drawable/ic_view_module_white_24dp"
-                        fab:fab_colorNormal="@color/accent_color"
-                        fab:fab_colorPressed="@color/white_pressed"/>
+                        app:fab_icon="@drawable/ic_view_module_white_24dp"
+                        app:fab_colorNormal="@color/accent_color"
+                        app:fab_colorPressed="@color/floating_action_button_push"/>
 
                     <com.getbase.floatingactionbutton.FloatingActionButton
                         android:id="@+id/btn_new_photo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        fab:fab_icon="@drawable/ic_photo_camera_white_24dp"
-                        fab:fab_colorNormal="@color/accent_color"
-                        fab:fab_colorPressed="@color/white_pressed"/>
-
-
+                        app:fab_icon="@drawable/ic_photo_camera_white_24dp"
+                        app:fab_colorNormal="@color/accent_color"
+                        app:fab_colorPressed="@color/floating_action_button_push"/>
 
                 </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

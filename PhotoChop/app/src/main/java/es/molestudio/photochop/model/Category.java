@@ -5,41 +5,15 @@ import java.io.Serializable;
 /**
  * Created by Chus on 31/12/14.
  */
-public class Category implements Serializable {
+public class Category extends Selectable implements Serializable {
 
-    private int mCagetoryId;
-    private String mCategoryName;
-    private String mCategoryDescription;
 
     public Category(int cagetoryId, String categoryName, String categoryDescription) {
-        mCagetoryId = cagetoryId;
-        mCategoryName = categoryName;
-        mCategoryDescription = categoryDescription;
+        super(cagetoryId, categoryName, categoryDescription);
     }
 
-    public Category() {}
-
-    public int getCagetoryId() {
-        return mCagetoryId;
+    public Category() {
+        super();
     }
 
-    public void setCagetoryId(int cagetoryId) {
-        mCagetoryId = cagetoryId;
-    }
-
-    public String getCategoryName() {
-        return mCategoryName;
-    }
-
-    public void setCategoryName(String categoryName) {
-        mCategoryName = categoryName;
-    }
-
-    public String getCategoryDescription() {
-        return mCategoryDescription;
-    }
-
-    public void setCategoryDescription(String categoryDescription) {
-        mCategoryDescription = categoryDescription;
-    }
 }

@@ -20,6 +20,10 @@
     <color name="floating_action_button_push">#009688</color>
     <color name="tab_bar_color">#00BCD4</color>
 
+    <!-- Edit text -->
+    <color name="edit_text_dissabled">#ffababab</color>
+    <color name="edit_text_focused">@color/primary_color</color>
+
     <color name="drawer_grey">#616161</color>
 
 

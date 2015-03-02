@@ -58,13 +58,14 @@ public class GetImagesFromGalleryTask extends AsyncTask<Void, ArrayList<Image>, 
         result.close();
 
         // Internal storage
+        /*
         result = mContext.getContentResolver().query(MediaStore.Images.Media.INTERNAL_CONTENT_URI, this.mColumns, null, null, orderBy + " DESC");
         if (result.moveToFirst()) {
             do {
                 images.add(createImage(result));
             } while (result.moveToNext());
         }
-        result.close();
+        result.close();*/
 
 
         return images;

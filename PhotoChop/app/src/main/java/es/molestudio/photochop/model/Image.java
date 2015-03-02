@@ -102,4 +102,7 @@ public class Image implements Serializable {
     public void setImageSubCategory(SubCategory imageSubCategory) {
         mImageSubCategory = imageSubCategory;
     }
+
+
+
 }

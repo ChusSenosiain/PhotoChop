@@ -16,59 +16,129 @@
         android:scaleType="centerCrop"
         android:background="@color/material_teal"/>
 
-    <LinearLayout
+    <android.support.v7.widget.CardView
         android:layout_below="@id/iv_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/material_amber">
-
-        <es.molestudio.photochop.View.AppEditText
-            android:id="@+id/et_image_name"
-            style="@style/AppTextField.Regular.Medium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <es.molestudio.photochop.View.AppTextView
-            android:id="@+id/tv_image_date"
-            style="@style/AppTextField.Regular.Medium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <es.molestudio.photochop.View.AppEditText
-            android:id="@+id/et_category"
-            style="@style/AppTextField.Regular.Medium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <es.molestudio.photochop.View.AppEditText
-            android:id="@+id/et_subcategory"
-            style="@style/AppTextField.Regular.Medium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        android:layout_height="match_parent">
 
 
         <LinearLayout
+            android:layout_below="@id/iv_image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <ImageView
-                style="@style/AppImageIcon.Medium"
-                android:id="@+id/iv_location"
-                android:src="@drawable/ic_action_place"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <es.molestudio.photochop.View.AppTextView
-                android:id="@+id/tv_address"
+                <!-- Date -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        style="@style/AppImageIcon.Medium.Grey"
+                        android:src="@drawable/ic_insert_invitation_white_24dp"/>
+
+                    <es.molestudio.photochop.View.AppTextView
+                        android:id="@+id/tv_image_date"
+                        style="@style/AppTextField.Regular.Medium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="Fri 24 September 2014"/>
+
+                </LinearLayout>
+
+
+                <!-- Time -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical|right"
+                    >
+
+                    <ImageView
+                        style="@style/AppImageIcon.Medium.Grey"
+                        android:src="@drawable/ic_schedule_white_24dp"/>
+
+                    <es.molestudio.photochop.View.AppTextView
+                        android:id="@+id/tv_image_time"
+                        style="@style/AppTextField.Regular.Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="21:36"
+                        android:textColor="@color/dark_grey"/>
+
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+            <es.molestudio.photochop.View.AppEditText
+                android:id="@+id/et_image_name"
+                style="@style/AppTextField.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Image name"/>
+
+
+            <AutoCompleteTextView
+                android:id="@+id/et_category"
                 style="@style/AppTextField.Regular.Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="hola"
-                android:maxLines="3"
-                android:ellipsize="end"/>
+                android:text="Category"/>
+
+            <AutoCompleteTextView
+                android:id="@+id/et_subcategory"
+                style="@style/AppTextField.Regular.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Subcategory"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    style="@style/AppImageIcon.Medium.Grey"
+                    android:id="@+id/iv_location"
+                    android:src="@drawable/ic_place_white_24dp"/>
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner"
+                    android:layout_weight="1"/>
+
+                <es.molestudio.photochop.View.AppTextView
+                    android:id="@+id/tv_address"
+                    style="@style/AppTextField.Regular.Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="hola"
+                    android:maxLines="3"
+                    android:ellipsize="end"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+
+
+    </android.support.v7.widget.CardView>
+
 
 </RelativeLayout>

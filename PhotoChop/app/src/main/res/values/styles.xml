@@ -13,11 +13,6 @@
         <item name="actionModeBackground">@color/primary_color</item>
     </style>
 
-    <style name="AppTheme.TextView" parent="AppTheme">
-        <item name="android:textColor">@color/ligth_letters</item>
-    </style>
-
-
 
     <!-- ActionBar styles -->
     <style name="MyActionBar"
@@ -32,7 +27,9 @@
 
 
     <!-- TextFields -->
-    <style name="AppTextField" parent="AppTheme"/>
+    <style name="AppTextField" parent="AppTheme">
+        <item name="android:textColor">@color/dark_grey</item>
+    </style>
 
     <!-- Text Field regular -->
     <style name="AppTextField.Regular" parent="AppTextField">
@@ -59,6 +56,15 @@
     </style>
 
 
+    <!-- Edit text -->
+    <style name="AppTextField.EditText" parent="AppTextField.Regular.Medium">
+        <item name="android:background">@drawable/apptheme_edit_text</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:cursorVisible">false</item>
+    </style>
+
+
+
 
     <!-- ImageViews -->
     <style name="AppImageView" parent="AppTheme">
@@ -75,6 +81,11 @@
         <item name="android:layout_height">24dp</item>
         <item name="android:layout_width">24dp</item>
         <item name="android:scaleType">centerCrop</item>
+    </style>
+
+
+    <style name="AppImageIcon.Medium.Grey" parent="AppImageIcon.Medium">
+        <item name="android:tint">@color/icon_grey</item>
     </style>
 
 

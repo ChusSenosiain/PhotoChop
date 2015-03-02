@@ -105,7 +105,7 @@ public class GridFragment extends Fragment implements AdapterView.OnItemLongClic
 
         Image image = (Image) mADPGridImage.getItem(position);
 
-        if (mIsInSelecionMode) {
+        if (!mIsInSelecionMode) {
             Intent imageGallery = new Intent(getActivity(), SwipeGalleryActivity.class);
             imageGallery.putExtra(SwipeGalleryActivity.EXTRA_IMAGE_ID, image.getImageId());
             startActivity(imageGallery);

@@ -53,5 +53,41 @@ public class AppUtils {
         return parsed;
     }
 
+    public static String[] dateToStringInLetters(Date date) {
+
+        String formatDate = null;
+        String formatTime = null;
+
+        String returnDate[] = {null, null};
+
+        try {
+
+            // Day of week
+            String dayOfWeek = new SimpleDateFormat("E").format(date);
+
+            // Day
+            String day = new SimpleDateFormat("d").format(date);
+
+            // Month
+            String month = new SimpleDateFormat("MMM").format(date);
+
+            // Year
+            String year = new SimpleDateFormat("yyyy").format(date);
+
+            formatDate = dayOfWeek + " " + day + " " + month + " " + year;
+
+            formatTime = new SimpleDateFormat("HH:mm").format(date);
+
+            returnDate[0] = formatDate;
+            returnDate[1] = formatTime;
+
+        } catch (Exception e) {
+
+        }
+
+        return returnDate;
+
+    }
+
 
 }
