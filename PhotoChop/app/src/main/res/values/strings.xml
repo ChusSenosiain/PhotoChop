@@ -31,5 +31,6 @@
     <string name="btn_import_image_title">"Import from gallery"</string>
     <string name="btn_take_photo_title">Take a photo</string>
     <string name="title_activity_image_details">ImageDetailsActivity</string>
+    <string name="title_activity_splash">SplashActivity</string>
 
 </resources>
