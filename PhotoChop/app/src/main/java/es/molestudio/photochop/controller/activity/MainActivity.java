@@ -25,6 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class MainActivity extends ActionBarActivity
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
     private ActionBar mActionBar;
+    private FloatingActionsMenu mFloatingActionsMenu;
 
 
     @Override
@@ -133,9 +135,10 @@ public class MainActivity extends ActionBarActivity
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-
+        mFloatingActionsMenu = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
         FloatingActionButton btnCamera = (FloatingActionButton) findViewById(R.id.btn_new_photo);
         FloatingActionButton btnImportFromGallery = (FloatingActionButton) findViewById(R.id.btn_import_from_gallery);
+
 
         btnCamera.setOnClickListener(this);
         btnImportFromGallery.setOnClickListener(this);
@@ -192,7 +195,7 @@ public class MainActivity extends ActionBarActivity
      * we have to create a custom selectable gallery
      */
     private void importFromGallery() {
-
+        mFloatingActionsMenu.collapse();
         Intent imageGallery = new Intent(this, GalleryActivity.class);
         startActivityForResult(imageGallery, GalleryActivity.RQ_SELECT_IMAGE);
     }
@@ -202,6 +205,7 @@ public class MainActivity extends ActionBarActivity
      * Take a photo
      */
     private void takePhoto() {
+        mFloatingActionsMenu.collapse();
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, RQ_CAPTURE_IMAGE);
         mMyLocation = new MyLocation(this, this);

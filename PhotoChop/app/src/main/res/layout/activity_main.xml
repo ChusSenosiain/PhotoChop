@@ -79,7 +79,7 @@
             <!-- Drawer -->
 
             <LinearLayout
-                android:background="@color/background_window"
+                android:background="@color/navigation_drawer_background"
                 android:id="@+id/left_drawer"
                 android:layout_width="250dp"
                 android:layout_height="match_parent"

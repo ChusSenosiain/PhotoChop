@@ -19,6 +19,8 @@
     <color name="floating_action_button">@color/accent_color</color>
     <color name="floating_action_button_push">@color/light_primary_color</color>
 
+    <color name="navigation_drawer_background">#727272</color>
+
     <color name="btn_facebook_login">#4285F4</color>
 
 
