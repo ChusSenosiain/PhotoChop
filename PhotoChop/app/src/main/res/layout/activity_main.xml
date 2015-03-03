@@ -76,13 +76,10 @@
             </RelativeLayout>
 
 
-
-
-
             <!-- Drawer -->
 
             <LinearLayout
-                android:background="@color/drawer_grey"
+                android:background="@color/background_window"
                 android:id="@+id/left_drawer"
                 android:layout_width="250dp"
                 android:layout_height="match_parent"
@@ -91,6 +88,7 @@
                 android:layout_gravity="start">
 
                 <RelativeLayout
+                    android:id="@+id/user_data_holder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"

@@ -25,9 +25,6 @@ dependencies {
 
     compile 'com.google.android.gms:play-services:6.5.87'
 
-    // External libraries
-    // UIL: for load images and show it in the correct resolution
-    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
     // Floating action button
     compile 'com.getbase:floatingactionbutton:1.8.0'
     // CardView

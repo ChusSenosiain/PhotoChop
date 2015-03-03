@@ -1,0 +1,57 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:elevation="4dp"/>
+
+
+    <!-- The main content view -->
+    <LinearLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/accent_color"
+            android:elevation="4dp">
+
+            <es.molestudio.photochop.View.PagerSlidingTabStrip
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:textColor="@android:color/white"
+                android:textSize="13dp"
+                app:pstsTextStyle="medium"
+                app:pstsTabPaddingLeftRight="5dp"
+                app:pstsShouldExpand="true"
+                app:pstsIndicatorColor="@android:color/white"
+                app:pstsIndicatorStyle="circles"
+                />
+
+        </RelativeLayout>
+
+        <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+                                           android:id="@+id/pager"
+                                           android:layout_width="match_parent"
+                                           android:layout_height="match_parent"
+                                           android:theme="@style/AppTheme"/>
+    </LinearLayout>
+
+
+
+</LinearLayout>
+

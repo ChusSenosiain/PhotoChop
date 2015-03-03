@@ -12,13 +12,15 @@
 
 
 
-    <color name="dark_primary_color">#512DA8</color> <!-- blue status bar -->
-    <color name="primary_color">@color/material_deep_purple</color> <!-- Action bar color -->
-    <color name="light_primary_color">#D1C4E9</color>
-    <color name="accent_color">@color/material_light_green</color>
+    <color name="dark_primary_color">#7B1FA2</color> <!-- blue status bar -->
+    <color name="primary_color">#9C27B0</color> <!-- Action bar color -->
+    <color name="light_primary_color">#E1BEE7</color>
+    <color name="accent_color">#FF4081</color>
     <color name="floating_action_button">@color/accent_color</color>
-    <color name="floating_action_button_push">#009688</color>
-    <color name="tab_bar_color">#00BCD4</color>
+    <color name="floating_action_button_push">@color/light_primary_color</color>
+
+    <color name="btn_facebook_login">#4285F4</color>
+
 
     <!-- Edit text -->
     <color name="edit_text_dissabled">#ffababab</color>

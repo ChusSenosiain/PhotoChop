@@ -14,8 +14,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-
 import java.util.ArrayList;
 
 import es.molestudio.photochop.R;
@@ -25,6 +23,7 @@ import es.molestudio.photochop.controller.DataStorage;
 import es.molestudio.photochop.controller.adapter.ADPSelectable;
 import es.molestudio.photochop.controller.location.GetAddressFromGPSLocationTask;
 import es.molestudio.photochop.controller.util.AppUtils;
+import es.molestudio.photochop.controller.util.ImageLoader;
 import es.molestudio.photochop.model.Category;
 import es.molestudio.photochop.model.Constants;
 import es.molestudio.photochop.model.Image;
@@ -66,7 +65,8 @@ public class ImageDetailsActivity extends ActionBarActivity {
         //etSubCagegory.setText(mImage.getImageSubCategory().getSubCaregoryName());
 
         // Show image
-        ImageLoader.getInstance().displayImage(mImage.getImageUri().toString(), ivImage, Constants.UIL_DISPLAY_IMAGE_OPTIONS);
+        //ImageLoader.getInstance().displayImage(mImage.getImageUri().toString(), ivImage, Constants.UIL_DISPLAY_IMAGE_OPTIONS);
+        new ImageLoader(this).displayImage(ivImage, mImage.getImageUri());
 
         // Get the image address (Reverse Localization)
         Location location = new Location("dummyProvider");

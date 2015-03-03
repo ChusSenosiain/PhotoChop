@@ -1,0 +1,179 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/parent_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:background="@color/background_window">
+
+
+    <LinearLayout
+        android:id="@+id/loggin_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_centerInParent="true">
+
+        <!-- Login Facebook -->
+        <RelativeLayout
+            android:id="@+id/btn_facebook_login"
+            android:layout_width="270dp"
+            android:layout_height="50dp"
+            android:background="@drawable/btn_facebook_loggin"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_marginBottom="16dp">
+
+            <ImageView
+                android:id="@+id/iv_facebook_ico"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_facebook"
+                android:layout_marginRight="16dp"
+                android:layout_centerVertical="true"
+                android:scaleType="centerCrop"/>
+
+            <es.molestudio.photochop.View.AppTextView
+                style="@style/AppTextField.ButtonText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/facebook_signin"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/iv_facebook_ico"/>
+
+        </RelativeLayout>
+
+
+        <!-- Divider -->
+        <LinearLayout
+            android:layout_width="380dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="25dp">
+
+            <View
+                style="@style/Divider"
+                android:layout_weight="1">
+            </View>
+
+            <es.molestudio.photochop.View.AppTextView
+                style="@style/AppTextField.Light.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/or_conjunction"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"/>
+
+            <View
+                style="@style/Divider"
+                android:layout_weight="1">
+            </View>
+
+        </LinearLayout>
+
+        <!-- NickName editText -->
+        <RelativeLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content">
+
+            <es.molestudio.photochop.View.AppEditText
+                android:id="@+id/et_email"
+                style="@style/AppTextField.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="80dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="2dp"
+                android:inputType="textPersonName|textNoSuggestions"
+                android:hint="@string/hint_email"/>
+
+
+        </RelativeLayout>
+
+        <!-- Password edittext -->
+        <RelativeLayout
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="16dp"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content">
+
+            <es.molestudio.photochop.View.AppEditText
+                android:id="@+id/et_password"
+                style="@style/AppTextField.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="80dp"
+                android:paddingRight="60dp"
+                android:paddingBottom="2dp"
+                android:inputType="textPassword|textNoSuggestions"
+                android:hint="@string/hint_password"/>
+
+            <es.molestudio.photochop.View.AppTextView
+                android:id="@+id/tv_show_password"
+                style="@style/AppTextField.Light.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignBaseline="@id/et_password"
+                android:text="@string/txt_show"
+                android:gravity="right"
+                android:textColor="@color/clear_grey"/>
+
+        </RelativeLayout>
+
+
+        <!-- Login Button -->
+        <RelativeLayout
+            android:id="@+id/btn_login"
+            android:layout_width="270dp"
+            android:layout_height="50dp"
+            android:background="@drawable/btn_app"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp">
+
+
+            <es.molestudio.photochop.View.AppTextView
+                style="@style/AppTextField.ButtonText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/signin"
+                android:layout_centerInParent="true"/>
+
+        </RelativeLayout>
+
+
+        <!-- Forgot Password text button -->
+        <RelativeLayout
+            android:id="@+id/btn_forgot_pass"
+            android:layout_marginTop="10dp"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp">
+
+            <es.molestudio.photochop.View.AppTextView
+                android:id="@+id/tv_fgot_password"
+                style="@style/AppTextField.Light.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_forgot_pass"/>
+
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

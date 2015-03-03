@@ -32,5 +32,23 @@
     <string name="btn_take_photo_title">Take a photo</string>
     <string name="title_activity_image_details">ImageDetailsActivity</string>
     <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_log_in">LogInActivity</string>
+    <string name="txt_hide">Hide Image</string>
+    <string name="txt_delete">Delete</string>
+    <string name="txt_select">Select</string>
+
+    <!-- Sign In / Sign Up -->
+
+    <string name="title_signin">Sign In</string>
+    <string name="title_singup">Sign Up</string>
+    <string name="facebook_signin">Sign in with Facebook</string>
+    <string name="or_conjunction">Or</string>
+    <string name="signin">Sign In</string>
+    <string name="txt_show">SHOW</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="btn_forgot_pass">Forgot your Password?</string>
+    <string name="hint_nick_name">Nickname</string>
+
 
 </resources>

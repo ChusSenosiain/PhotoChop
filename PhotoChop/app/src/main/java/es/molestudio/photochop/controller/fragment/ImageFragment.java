@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -21,12 +20,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import es.molestudio.photochop.R;
 import es.molestudio.photochop.View.AppTextView;
@@ -34,6 +28,8 @@ import es.molestudio.photochop.controller.DataStorage;
 import es.molestudio.photochop.controller.activity.ImageDetailsActivity;
 import es.molestudio.photochop.controller.activity.MapActivity;
 import es.molestudio.photochop.controller.util.AppUtils;
+import es.molestudio.photochop.controller.util.ImageLoader;
+import es.molestudio.photochop.controller.util.Log;
 import es.molestudio.photochop.model.Image;
 import es.molestudio.photochop.model.enumerator.ActionType;
 
@@ -43,15 +39,6 @@ import es.molestudio.photochop.model.enumerator.ActionType;
 public class ImageFragment extends Fragment implements View.OnClickListener {
 
 
-    private DisplayImageOptions mDisplayImageOptions = new DisplayImageOptions.Builder()
-            .showImageOnLoading(null)
-            .showImageForEmptyUri(null)
-            .showImageOnFail(null)
-            .cacheInMemory(false)
-            .cacheOnDisk(true)
-            .considerExifParams(true)
-            .imageScaleType(ImageScaleType.EXACTLY)
-            .build();
 
     private OnImageUpdateListener mListener;
 
@@ -112,7 +99,7 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
 
         View root = inflater.inflate(R.layout.fragment_image, container, false);
 
-        ImageView ivImage = (ImageView) root.findViewById(R.id.iv_image);
+        final ImageView ivImage = (ImageView) root.findViewById(R.id.iv_image);
         AppTextView tvImageName = (AppTextView) root.findViewById(R.id.image_name);
         AppTextView tvImageDate = (AppTextView) root.findViewById(R.id.image_date);
         mImageOptions = (LinearLayout) root.findViewById(R.id.image_data_holder);
@@ -138,15 +125,7 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
             tvImageDate.setText(timeDate[0] + " - " + timeDate[1]);
             tvImageName.setText(mImage.getImageName());
 
-            ImageLoader.getInstance().displayImage(mImage.getImageUri().toString(), ivImage, mDisplayImageOptions, new SimpleImageLoadingListener() {
-                @Override
-                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                    super.onLoadingComplete(imageUri, view, loadedImage);
-                    Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.abc_fade_in);
-                    ((ImageView) view).setAnimation(anim);
-                    anim.start();
-                }
-            });
+            new ImageLoader(getActivity()).displayImage(ivImage, mImage.getImageUri());
 
             checkAsFavorite();
 
@@ -334,6 +313,8 @@ public class ImageFragment extends Fragment implements View.OnClickListener {
         super.onDetach();
         mListener = null;
     }
+
+
 
 
 }

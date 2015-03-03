@@ -29,7 +29,8 @@ public class GetImagesFromGalleryTask extends AsyncTask<Void, ArrayList<Image>, 
                                 MediaStore.Images.Media.DISPLAY_NAME,
                                 MediaStore.Images.Media.DATE_TAKEN,
                                 MediaStore.Images.Media.LATITUDE,
-                                MediaStore.Images.Media.LONGITUDE};
+                                MediaStore.Images.Media.LONGITUDE,
+                                MediaStore.Images.Media._ID};
 
     public GetImagesFromGalleryTask(Context context, ImageReaderListener listener) {
         mContext = context;
@@ -91,18 +92,21 @@ public class GetImagesFromGalleryTask extends AsyncTask<Void, ArrayList<Image>, 
         String date;
         Double lat;
         Double lon;
+        Long id;
 
         path = result.getString(result.getColumnIndex(mColumns[0]));
         name = result.getString(result.getColumnIndex(mColumns[1]));
         date = result.getString(result.getColumnIndex(mColumns[2]));
         lat  = result.getDouble(result.getColumnIndex(mColumns[3]));
         lon  = result.getDouble(result.getColumnIndex(mColumns[4]));
+        id   = result.getLong(result.getColumnIndex(mColumns[5]));
 
         Image image = new Image();
         image.setImageUri(Uri.fromFile(new File(path)));
         image.setImageName(name);
         image.setImageLatitude(lat);
         image.setImageLongitude(lon);
+        image.setImageInternalId(id);
 
         try {
             image.setImageDate(new Date(Integer.valueOf(date)));

@@ -1,8 +1,10 @@
 package es.molestudio.photochop.controller.activity;
 
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -18,6 +20,16 @@ public class GalleryActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
 
+        // Set up toolbar as actionbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tb_toolbar);
+        setSupportActionBar(toolbar);
+
+        // Set up toolbar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("");
+        // enable ActionBar app icon to behave as action to toggle nav drawer
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         FragmentManager manager = getSupportFragmentManager();
 
         if (manager.findFragmentById(R.id.fragment_holder) == null) {
@@ -32,24 +44,20 @@ public class GalleryActivity extends ActionBarActivity {
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_activity_test, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case android.R.id.home:
+                finish();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);

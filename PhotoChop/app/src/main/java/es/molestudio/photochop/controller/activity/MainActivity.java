@@ -21,9 +21,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -83,14 +85,21 @@ public class MainActivity extends ActionBarActivity
         // Show the grid
         FragmentManager manager = getSupportFragmentManager();
         if (manager.findFragmentById(R.id.fragment_holder) == null) {
-
             manager.beginTransaction()
                     .add(R.id.fragment_holder, GridFragment.newInstance(null))
                     .commit();
         }
 
         // Set up the drawer
+
+
         // Left Drawer items
+
+        // User item
+        RelativeLayout rlUserData = (RelativeLayout) findViewById(R.id.user_data_holder);
+        rlUserData.setOnClickListener(this);
+
+        // List items
         String[] drawerMenuItems = getResources().getStringArray(R.array.drawer_main_items);
         ObjectDrawerItem[] drawerItems = new ObjectDrawerItem[drawerMenuItems.length];
         drawerItems[0] = new ObjectDrawerItem(R.drawable.ic_settings_white_24dp, drawerMenuItems[0]);
@@ -135,6 +144,16 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        Log.d("On resume del activity");
+
+
+    }
+
+
+    @Override
     public void onClick(View v) {
 
         switch (v.getId()) {
@@ -147,9 +166,26 @@ public class MainActivity extends ActionBarActivity
                 // Gallery intent
                 importFromGallery();
                 break;
+
+            case R.id.user_data_holder:
+                // User config or login
+                userConfig();
+                break;
         }
     }
 
+    /**
+     * If the user is logged, go to user config.
+     * If the user isn't logged, go to loggin page
+     */
+    private void userConfig() {
+
+        ParseUser parseUser = ParseUser.getCurrentUser();
+        if (parseUser == null) {
+            Intent logginIntent = new Intent(MainActivity.this, LogInActivity.class);
+            startActivityForResult(logginIntent, LogInActivity.RQ_LOGGIN);
+        }
+    }
 
     /**
      * Go to gallery: the default intent for choose an image doesn't allow to choose multiple images
@@ -240,7 +276,9 @@ public class MainActivity extends ActionBarActivity
     }
 
     private void finishLocationService() {
-        mMyLocation.stopLocationService();
+        if (mMyLocation != null) {
+            mMyLocation.stopLocationService();
+        }
     }
 
     @Override
@@ -303,4 +341,7 @@ public class MainActivity extends ActionBarActivity
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
 }

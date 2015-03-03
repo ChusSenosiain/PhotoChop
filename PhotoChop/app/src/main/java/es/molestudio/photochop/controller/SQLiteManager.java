@@ -10,6 +10,7 @@ import android.net.Uri;
 import java.util.ArrayList;
 
 import es.molestudio.photochop.controller.util.AppUtils;
+import es.molestudio.photochop.controller.util.Log;
 import es.molestudio.photochop.model.Category;
 import es.molestudio.photochop.model.Image;
 import es.molestudio.photochop.model.SubCategory;
@@ -26,6 +27,7 @@ public class SQLiteManager implements IDataManager {
 
     // Image table
     private static final String CN_IMAGE_ID = "imageId";
+    private static final String CN_IMAGE_INTERNAL_ID = "internalId";
     private static final String CN_NAME = "name";
     private static final String CN_DESCRIPTION = "description";
     private static final String CN_URI = "uri";
@@ -35,6 +37,7 @@ public class SQLiteManager implements IDataManager {
     private static final String CN_CAT = "categoryId";
     private static final String CN_SUB_CAT = "subcategoryId";
     private static final String CN_FAVORITE = "favorite";
+    private static final String CN_HIDDEN = "hidden";
     // Category table: the rest of the fiels have the same names than CN_NAME and CN_DESCRIPTION
     private static final String CN_CATEGORY_ID = "categoryId";
     // Subcategory table: the rest of the fields have the same names than CN_NAME, CN_DESCRIPTION and CN_CATEGORY_ID
@@ -64,6 +67,8 @@ public class SQLiteManager implements IDataManager {
         content.put(CN_CAT, image.getImageCategory().getId());
         content.put(CN_SUB_CAT, image.getImageSubCategory().getId());
         content.put(CN_FAVORITE, image.isFavorite());
+        content.put(CN_HIDDEN, image.isHidden());
+        content.put(CN_IMAGE_INTERNAL_ID, String.valueOf(image.getImageInternalId()));
 
         return content;
 
@@ -198,6 +203,29 @@ public class SQLiteManager implements IDataManager {
     }
 
     @Override
+    public int updateImages(ArrayList<Image> images) {
+
+        int numRows = 1;
+
+        SQLiteDatabase db = DBHelper.getInstance(mContext);
+
+        db.beginTransaction();
+
+        for (Image image: images) {
+            int numRowsUpdated = db.update("image", createContentImage(image), CN_IMAGE_ID + "=" + image.getImageId(), null);
+
+            if (numRowsUpdated != 1) {
+                numRows = numRowsUpdated;
+            }
+        }
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+        return numRows;
+    }
+
+    @Override
     public int deleteImage(Image image) {
 
         SQLiteDatabase db = DBHelper.getInstance(mContext);
@@ -211,6 +239,29 @@ public class SQLiteManager implements IDataManager {
 
         return numRows;
 
+    }
+
+    @Override
+    public int deleteImages(ArrayList<Image> images) {
+
+        int numRows = 1;
+
+        SQLiteDatabase db = DBHelper.getInstance(mContext);
+
+        db.beginTransaction();
+
+        for (Image image: images) {
+            int numRowsDeleted = db.delete("image", CN_IMAGE_ID + "=" + image.getImageId(), null);
+
+            if (numRowsDeleted != 1) {
+                numRows = numRowsDeleted;
+            }
+        }
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+        return numRows;
     }
 
     @Override
@@ -322,20 +373,22 @@ public class SQLiteManager implements IDataManager {
     }
 
 
-
-
-
-
     private Image createImageFromCursor(Cursor cursor) {
 
         Image image = new Image();
 
-        image.setImageId(cursor.getInt(cursor.getColumnIndex(CN_IMAGE_ID)));
-        image.setImageUri(Uri.parse(cursor.getString(cursor.getColumnIndex(CN_URI))));
-        image.setImageDate(AppUtils.getDateFromString(cursor.getString(cursor.getColumnIndex(CN_DATE))));
-        image.setImageLatitude(cursor.getDouble(cursor.getColumnIndex(CN_LAT)));
-        image.setImageLongitude(cursor.getDouble(cursor.getColumnIndex(CN_LON)));
-        image.setFavorite(cursor.getInt(cursor.getColumnIndex(CN_FAVORITE)) == 1);
+        try {
+            image.setImageId(cursor.getInt(cursor.getColumnIndex(CN_IMAGE_ID)));
+            image.setImageUri(Uri.parse(cursor.getString(cursor.getColumnIndex(CN_URI))));
+            image.setImageDate(AppUtils.getDateFromString(cursor.getString(cursor.getColumnIndex(CN_DATE))));
+            image.setImageLatitude(cursor.getDouble(cursor.getColumnIndex(CN_LAT)));
+            image.setImageLongitude(cursor.getDouble(cursor.getColumnIndex(CN_LON)));
+            image.setFavorite(cursor.getInt(cursor.getColumnIndex(CN_FAVORITE)) == 1);
+            image.setHidden(cursor.getInt(cursor.getColumnIndex(CN_HIDDEN)) == 1);
+            image.setImageInternalId(Long.parseLong(cursor.getString(cursor.getColumnIndex(CN_IMAGE_INTERNAL_ID))));
+        } catch (Exception e) {
+            Log.d("Cannot get the image from bd!");
+        }
 
         return image;
     }

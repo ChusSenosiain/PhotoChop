@@ -10,6 +10,7 @@ import java.util.Date;
  */
 public class Image implements Serializable {
 
+    private long mImageInternalId;
     private int mImageId;
     private String mImageName;
     private String mImageDescription;
@@ -19,15 +20,9 @@ public class Image implements Serializable {
     private Double mImageLongitude;
     private Category mImageCategory = new Category();
     private SubCategory mImageSubCategory = new SubCategory();
-    private boolean mFavorite;
+    private boolean mIsFavorite = false;
+    private boolean mIsHidden = false;
 
-    public boolean isFavorite() {
-        return mFavorite;
-    }
-
-    public void setFavorite(boolean favorite) {
-        mFavorite = favorite;
-    }
 
     public Image() {}
 
@@ -103,6 +98,31 @@ public class Image implements Serializable {
         mImageSubCategory = imageSubCategory;
     }
 
+    public long getImageInternalId() {
+        return mImageInternalId;
+    }
 
+    public void setImageInternalId(long imageInternalId) {
+        mImageInternalId = imageInternalId;
+    }
 
+    public void setImageUri(String imageUri) {
+        mImageUri = imageUri;
+    }
+
+    public boolean isFavorite() {
+        return mIsFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        mIsFavorite = favorite;
+    }
+
+    public boolean isHidden() {
+        return mIsHidden;
+    }
+
+    public void setHidden(boolean isHidden) {
+        mIsHidden = isHidden;
+    }
 }

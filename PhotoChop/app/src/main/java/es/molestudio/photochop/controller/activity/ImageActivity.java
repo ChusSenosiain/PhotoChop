@@ -37,7 +37,7 @@ public class ImageActivity extends ActionBarActivity {
         if (manager.findFragmentById(R.id.fragment_holder) == null) {
 
             Bundle fragmentArgs = new Bundle();
-            fragmentArgs.putSerializable(ImageFragment.IMAGE_ID, mImage.getImageId());
+            fragmentArgs.putSerializable(ImageFragment.ARG_IMAGE, mImage);
 
             manager.beginTransaction().add(R.id.fragment_holder, ImageFragment.newInstance(fragmentArgs))
                     .commit();

@@ -23,7 +23,11 @@ public interface IDataManager {
 
     public int updateImage(Image image);
 
+    public int updateImages(ArrayList<Image> images);
+
     public int deleteImage(Image image);
+
+    public int deleteImages(ArrayList<Image> images);
 
     public Image selectImage(Integer imageId);
 
