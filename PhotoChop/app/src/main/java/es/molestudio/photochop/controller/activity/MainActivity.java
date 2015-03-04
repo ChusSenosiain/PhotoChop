@@ -16,6 +16,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,7 +30,6 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.parse.ParseUser;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import es.molestudio.photochop.R;
@@ -224,14 +224,14 @@ public class MainActivity extends ActionBarActivity
             if (requestCode == RQ_CAPTURE_IMAGE) {
                 finishLocationService();
                 saveImage(data.getData());
-                mGridFragment.updateImagesFromBD();
+                mGridFragment.updateImagesFromBD(true);
             }
-            // Image(s) from gallery
+            // Import Image(s) from gallery
             else if (requestCode == GalleryActivity.RQ_SELECT_IMAGE) {
                 if (data != null) {
                     boolean newImages = data.getBooleanExtra(GridFragment.NEW_IMAGES_ON_BD, false);
                     if (newImages){
-                        mGridFragment.updateImagesFromBD();
+                        mGridFragment.updateImagesFromBD(true);
                     }
                 }
             }
@@ -348,14 +348,12 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onDone(User user, Exception error) {
-
         if (error == null) {
             Toast.makeText(this, getString(R.string.user_logout_ok), Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, getString(R.string.user_logout_error), Toast.LENGTH_SHORT).show();
         }
 
-
-
     }
+
 }

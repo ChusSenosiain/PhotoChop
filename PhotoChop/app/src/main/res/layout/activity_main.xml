@@ -110,14 +110,13 @@
                         android:paddingLeft="15dp"
                         android:paddingRight="15dp">
 
-                        <TextView
+                        <es.molestudio.photochop.View.AppTextView
                             android:id="@+id/tv_user_nickname"
+                            style="@style/AppTextField.Regular.Medium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="User NickName"
-                            android:textSize="20dp"
                             android:textColor="@android:color/white"/>
-
 
                     </LinearLayout>
 

@@ -12,6 +12,7 @@ public class Image implements Serializable {
 
     private long mImageInternalId;
     private int mImageId;
+    private String mImageBackendId;
     private String mImageName;
     private String mImageDescription;
     private String mImageUri;
@@ -124,5 +125,14 @@ public class Image implements Serializable {
 
     public void setHidden(boolean isHidden) {
         mIsHidden = isHidden;
+    }
+
+
+    public String getImageBackendId() {
+        return mImageBackendId;
+    }
+
+    public void setImageBackendId(String imageBackendId) {
+        mImageBackendId = imageBackendId;
     }
 }

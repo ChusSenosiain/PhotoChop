@@ -40,6 +40,7 @@
                 app:pstsShouldExpand="true"
                 app:pstsIndicatorColor="@android:color/white"
                 app:pstsIndicatorStyle="circles"
+                app:pstsDividerColor="@color/divider"
                 />
 
         </RelativeLayout>

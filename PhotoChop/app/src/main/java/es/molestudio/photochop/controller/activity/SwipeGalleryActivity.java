@@ -1,5 +1,7 @@
 package es.molestudio.photochop.controller.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,15 +11,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.SparseArray;
 import android.view.MenuItem;
 import android.view.Window;
 
 import java.util.ArrayList;
 
 import es.molestudio.photochop.R;
-import es.molestudio.photochop.controller.DataStorage;
+import es.molestudio.photochop.controller.Images;
 import es.molestudio.photochop.controller.fragment.ImageFragment;
+import es.molestudio.photochop.model.Image;
 import es.molestudio.photochop.model.enumerator.ActionType;
 
 /**
@@ -25,11 +27,13 @@ import es.molestudio.photochop.model.enumerator.ActionType;
  */
 public class SwipeGalleryActivity extends ActionBarActivity implements ImageFragment.OnImageUpdateListener {
 
-    public static final String EXTRA_IMAGE_ID = "es.molestudio.photochop.controller.activity.GalleryActivity.image_id";
+    public static final String EXTRA_IMAGE_POSITION = "es.molestudio.photochop.controller.activity.GalleryActivity.EXTRA_IMAGE_POSITION";
+    public static final String DELETE_IMAGES_ON_BD = "es.molestudio.photochop.controller.activity.GalleryActivity.DELETE_IMAGES_ON_BD";
+    public static final int RQ_CHANGE_IMAGES = 1457;
 
-    private Integer mImageID;
-    private ArrayList<Integer> mImageIds = new ArrayList<Integer>();
-    private SparseArray<Integer> mImages = new SparseArray<>();
+    private Integer mImagePosition;
+    private Integer mImagesOriginalItems;
+    private ArrayList<Image> mImages = new ArrayList<Image>();
 
     private ImagesPagerAdapter mImagesPagerAdapter;
     private ViewPager mImagesViewPager;
@@ -39,7 +43,7 @@ public class SwipeGalleryActivity extends ActionBarActivity implements ImageFrag
 
         super.onCreate(savedInstanceState);
 
-        mImageID = getIntent().getIntExtra(EXTRA_IMAGE_ID, 0);
+        mImagePosition = getIntent().getIntExtra(EXTRA_IMAGE_POSITION, 0);
 
         supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
@@ -56,14 +60,12 @@ public class SwipeGalleryActivity extends ActionBarActivity implements ImageFrag
         mImagesPagerAdapter = new ImagesPagerAdapter(getSupportFragmentManager());
         mImagesViewPager.setAdapter(mImagesPagerAdapter);
 
-        mImageIds = DataStorage.getDataStorage(this).getImagesIds();
+        mImages = Images.getInstance(this);
+        mImagesOriginalItems = mImages.size();
 
-        for (int i = 0; i < mImageIds.size(); i++) {
-            mImages.append(mImageIds.get(i), i);
-        }
 
-        if (mImageID != null) {
-            mImagesViewPager.setCurrentItem(mImages.get(mImageID));
+        if (mImagePosition != null) {
+            mImagesViewPager.setCurrentItem(mImagePosition);
         }
 
 
@@ -80,9 +82,8 @@ public class SwipeGalleryActivity extends ActionBarActivity implements ImageFrag
         ActionType actionType = (ActionType) imageUpdated.getSerializable(ImageFragment.ACTION_TYPE);
         if (actionType == ActionType.DELETE) {
 
-            mImageIds.remove(position);
-
-            if (mImageIds.size() == 0) {
+            mImages.remove(position);
+            if (mImages.size() == 0) {
                 finish();
                 return;
             }
@@ -94,7 +95,6 @@ public class SwipeGalleryActivity extends ActionBarActivity implements ImageFrag
             } else {
                 mImagesViewPager.setCurrentItem(0);
             }
-
         }
 
     }
@@ -109,14 +109,14 @@ public class SwipeGalleryActivity extends ActionBarActivity implements ImageFrag
         @Override
         public Fragment getItem(int position) {
             Bundle fragmentArgs = new Bundle();
-            fragmentArgs.putInt(ImageFragment.ARG_IMAGE_ID, mImageIds.get(position));
+            fragmentArgs.putInt(ImageFragment.ARG_IMAGE_ID, mImages.get(position).getImageId());
             fragmentArgs.putInt(ImageFragment.ARG_POSITION, position);
             return ImageFragment.newInstance(fragmentArgs);
         }
 
         @Override
         public int getCount() {
-            return mImageIds.size();
+            return mImages.size();
         }
 
         @Override
@@ -140,6 +140,7 @@ public class SwipeGalleryActivity extends ActionBarActivity implements ImageFrag
 
         switch (id) {
             case android.R.id.home:
+                sendResult();
                 finish();
                 return true;
         }
@@ -147,5 +148,22 @@ public class SwipeGalleryActivity extends ActionBarActivity implements ImageFrag
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    public void onBackPressed() {
+        sendResult();
+        super.onBackPressed();
+    }
+
+
+    private void sendResult() {
+
+        Intent returnIntent = new Intent();
+        if (mImages.size() != mImagesOriginalItems) {
+            returnIntent.putExtra(DELETE_IMAGES_ON_BD, true);
+        }
+        setResult(Activity.RESULT_OK, returnIntent);
+
+    }
 
 }

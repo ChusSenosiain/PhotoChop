@@ -3,6 +3,6 @@
 
     <item android:state_pressed="true" android:drawable="@color/floating_action_button_push" />
     <item android:state_focused="true" android:drawable="@color/floating_action_button_push"/>
-    <item android:drawable="@color/accent_color"/>
+    <item android:drawable="@android:color/transparent"/>
 
 </selector>

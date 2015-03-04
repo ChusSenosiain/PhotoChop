@@ -16,4 +16,8 @@ public class Constants {
     public static final Integer THUMBNAIL_DEFAULT_HEIGTH = 85;
 
 
+    public static final String TAG_PREFERENCES = "USER_PREFERENCES";
+    public static final String TAG_SHOW_HIDDEN = "show_hidden_images";
+
+
 }

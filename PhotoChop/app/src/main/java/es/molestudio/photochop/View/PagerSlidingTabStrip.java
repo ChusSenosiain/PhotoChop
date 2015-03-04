@@ -253,10 +253,18 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
 	private void addIconTab(final int position, Integer[] icon) {
 
+		/*ImageButton tab = new ImageButton(getContext());
+		tab.setImageResource(icon[0]);
+
+
+        addTab(position, tab);*/
+
+
         RelativeLayout fr = (RelativeLayout) inflate(getContext(), R.layout.tab_image, null);
         ImageView iv =  (ImageView) fr.findViewById(R.id.image);
 
         int metrics = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, icon[1], getResources().getDisplayMetrics());
+        //LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(metrics, metrics);
 
         iv.getLayoutParams().height = metrics;
         iv.getLayoutParams().width = metrics;

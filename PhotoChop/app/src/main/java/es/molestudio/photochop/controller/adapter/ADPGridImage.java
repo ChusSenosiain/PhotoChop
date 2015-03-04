@@ -43,7 +43,9 @@ public class ADPGridImage extends BaseAdapter  {
         mListener = listener;
         mImageLoader = new ImageLoader(mContext);
         mView = view;
+
     }
+
 
     public void updateImages(ArrayList<Image> images) {
 
@@ -96,8 +98,16 @@ public class ADPGridImage extends BaseAdapter  {
 
             for (int i = firstVisibleItem; i <= lastVisibleItem; i++) {
                 View view = gridView.getChildAt(i);
-                CheckBox chk = (CheckBox) view.findViewById(R.id.chk_selection);
-                chk.setVisibility(mIsInSelectionMode ? View.VISIBLE : View.INVISIBLE);
+
+                if (view != null) {
+                    CheckBox chk = (CheckBox) view.findViewById(R.id.chk_selection);
+                    chk.setVisibility(mIsInSelectionMode ? View.VISIBLE : View.INVISIBLE);
+                } else {
+                    // TODO: apaño hasta ver porque no ve los hijos del grid
+                    notifyDataSetChanged();
+                    break;
+                }
+
             }
         }
     }
@@ -167,10 +177,12 @@ public class ADPGridImage extends BaseAdapter  {
 
         if (view == null) {
             view = mInflater.inflate(R.layout.gridview_image_item, null);
+
             ViewHolder holder = new ViewHolder();
             holder.ivImagePhoto = (ImageView) view.findViewById(R.id.iv_image);
             view.setTag(holder);
         }
+
 
         final int pos = position;
         chk = (CheckBox) view.findViewById(R.id.chk_selection);
@@ -189,14 +201,19 @@ public class ADPGridImage extends BaseAdapter  {
         final ViewHolder holder = (ViewHolder) view.getTag();
         holder.ivImagePhoto.setImageDrawable(null);
 
-        mImageLoader.displayThumbnailImage(holder.ivImagePhoto, image.getImageInternalId());
+        if (image.isHidden()) {
+            holder.ivImagePhoto.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_lock_white_24dp));
+            holder.ivImagePhoto.setScaleType(ImageView.ScaleType.CENTER);
+        } else {
+            mImageLoader.displayThumbnailImage(holder.ivImagePhoto, image.getImageInternalId());
+            holder.ivImagePhoto.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        }
 
         return view;
     }
 
     private static class ViewHolder {
         public ImageView ivImagePhoto;
-        public CheckBox chkSelected;
     }
 
 }
