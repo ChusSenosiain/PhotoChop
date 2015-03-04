@@ -33,17 +33,21 @@ import java.util.Date;
 
 import es.molestudio.photochop.R;
 import es.molestudio.photochop.controller.DataStorage;
+import es.molestudio.photochop.controller.ILoginManager;
+import es.molestudio.photochop.controller.LoginManager;
 import es.molestudio.photochop.controller.adapter.ADPDrawer;
 import es.molestudio.photochop.controller.fragment.GridFragment;
 import es.molestudio.photochop.controller.location.MyLocation;
 import es.molestudio.photochop.controller.util.Log;
 import es.molestudio.photochop.model.Image;
 import es.molestudio.photochop.model.ObjectDrawerItem;
+import es.molestudio.photochop.model.User;
 
 public class MainActivity extends ActionBarActivity
         implements View.OnClickListener,
         ListView.OnItemClickListener,
-        MyLocation.ChangeLocationListener {
+        MyLocation.ChangeLocationListener,
+        ILoginManager.LoginActionListener {
 
 
     private static final int RQ_CAPTURE_IMAGE = 1001;
@@ -183,10 +187,15 @@ public class MainActivity extends ActionBarActivity
      */
     private void userConfig() {
 
+        mDrawerLayout.closeDrawer(mDrawerLinearLayout);
+
         ParseUser parseUser = ParseUser.getCurrentUser();
         if (parseUser == null) {
             Intent logginIntent = new Intent(MainActivity.this, LogInActivity.class);
             startActivityForResult(logginIntent, LogInActivity.RQ_LOGGIN);
+        } else {
+            //Intent userInfo = new Intent(MainActivity.this, UserConfigActivity.class);
+            //startActivity(userInfo);
         }
     }
 
@@ -306,13 +315,15 @@ public class MainActivity extends ActionBarActivity
                 break;
             // Logout
             case 2:
-                // TODO: logout need login :P
-                /*UserManager.logout(MainActivity.this);
-                Intent userLogginIntent = new Intent(MainActivity.this, SignActivity.class);
-                startActivity(userLogginIntent);
-                finish();*/
+                if (ParseUser.getCurrentUser() != null) {
+                    logOut();
+                }
                 break;
         }
+    }
+
+    private void logOut() {
+        LoginManager.getLoginManager(this).signOut(this);
     }
 
     private void selectItem(int position) {
@@ -347,5 +358,8 @@ public class MainActivity extends ActionBarActivity
     }
 
 
+    @Override
+    public void onDone(User user, Exception error) {
 
+    }
 }

@@ -1,10 +1,14 @@
 package es.molestudio.photochop.controller.util;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Base64;
 
+import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,6 +21,32 @@ import java.util.TimeZone;
  */
 public class AppUtils {
 
+
+    /**
+     * Obtiene la clave de la aplicación para FB
+     * @return Key de la applicación
+     */
+    public static void getAppKey(Context _context) {
+
+        String keyhash = null;
+        String packageName = _context.getPackageName().toString();
+
+        try {
+
+            PackageInfo info = _context.getPackageManager().getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
+
+            for (android.content.pm.Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                keyhash = Base64.encodeToString(md.digest(), Base64.DEFAULT);
+
+                Log.d("Obtengo Key: " + keyhash);
+            }
+        } catch (Exception e) {
+            Log.d("Error al obtener el hashkey: " + e.toString());
+        }
+
+    }
 
     public static String getStringFormatDate(Date date) {
 

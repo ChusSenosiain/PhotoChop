@@ -1,5 +1,6 @@
 package es.molestudio.photochop.controller.activity;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -9,85 +10,94 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.parse.ParseFacebookUtils;
 
 import es.molestudio.photochop.R;
 import es.molestudio.photochop.View.AppTextView;
 import es.molestudio.photochop.View.PagerSlidingTabStrip;
 import es.molestudio.photochop.controller.fragment.SignInFragment;
 import es.molestudio.photochop.controller.fragment.SignUpFragment;
+import es.molestudio.photochop.model.User;
 
 public class LogInActivity extends ActionBarActivity implements
-    ViewPager.OnPageChangeListener{
+    ViewPager.OnPageChangeListener,
+    SignUpFragment.FinishSignUpListener {
 
-        public static final int RQ_LOGGIN = 1004;
+    public static final int RQ_LOGGIN = 1004;
 
-        private PagerSlidingTabStrip mTabs;
-        private ViewPager mViewPager;
-        private MyPagerAdapter mPagerAdapter;
-        private ActionBar mActionBar;
+    private PagerSlidingTabStrip mTabs;
+    private ViewPager mViewPager;
+    private MyPagerAdapter mPagerAdapter;
+    private ActionBar mActionBar;
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-            setContentView(R.layout.activity_log_in);
+        setContentView(R.layout.activity_log_in);
 
-            // Set up toolbar as actionbar
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
+        // Set up toolbar as actionbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-            // Set up toolbar
-            mActionBar = getSupportActionBar();
-            mActionBar.setTitle("");
-            // enable ActionBar to have a custom layout
-            mActionBar.setDisplayShowCustomEnabled(true);
-            mActionBar.setDisplayHomeAsUpEnabled(true);
+        // Set up toolbar
+        mActionBar = getSupportActionBar();
+        mActionBar.setTitle("");
+        // enable ActionBar to have a custom layout
+        mActionBar.setDisplayShowCustomEnabled(true);
+        mActionBar.setDisplayHomeAsUpEnabled(true);
 
-            View view = getLayoutInflater().inflate(R.layout.action_bar_title_center, null);
-            AppTextView tvTitle = (AppTextView) view.findViewById(R.id.tv_title);
-            tvTitle.setText("Your Secret Photo");
+        View view = getLayoutInflater().inflate(R.layout.action_bar_title_center, null);
+        AppTextView tvTitle = (AppTextView) view.findViewById(R.id.tv_title);
+        tvTitle.setText("Your Secret Photo");
 
-            mActionBar.setCustomView(view);
+        mActionBar.setCustomView(view);
 
-            mTabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-            mViewPager = (ViewPager) findViewById(R.id.pager);
-            mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
+        mTabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
 
-            mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setAdapter(mPagerAdapter);
 
-            final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources()
-                    .getDisplayMetrics());
-            mViewPager.setPageMargin(pageMargin);
-            mViewPager.setOffscreenPageLimit(0);
-
-
-            mTabs.setViewPager(mViewPager);
-            mTabs.setOnPageChangeListener(this);
+        final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources()
+                .getDisplayMetrics());
+        mViewPager.setPageMargin(pageMargin);
+        mViewPager.setOffscreenPageLimit(0);
 
 
-            mViewPager.setCurrentItem(0, true);
+        mTabs.setViewPager(mViewPager);
+        mTabs.setOnPageChangeListener(this);
 
-        }
 
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        mViewPager.setCurrentItem(0, true);
 
-        }
+    }
 
-        @Override
-        public void onPageSelected(int position) {
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-        }
+    }
 
-        @Override
-        public void onPageScrollStateChanged(int state) {
+    @Override
+    public void onPageSelected(int position) {
 
-        }
+    }
 
-        public class MyPagerAdapter extends FragmentPagerAdapter {
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+    @Override
+    public void onFinishSingUp(User user) {
+        // Go to the sign in page
+        mViewPager.setCurrentItem(0);
+    }
+
+    public class MyPagerAdapter extends FragmentPagerAdapter {
 
 
             public MyPagerAdapter(FragmentManager fm) {
@@ -141,5 +151,12 @@ public class LogInActivity extends ActionBarActivity implements
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ParseFacebookUtils.finishAuthentication(requestCode, resultCode, data);
     }
 }

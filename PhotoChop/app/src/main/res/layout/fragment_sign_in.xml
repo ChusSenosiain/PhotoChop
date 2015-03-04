@@ -26,7 +26,8 @@
             android:background="@drawable/btn_facebook_loggin"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:clickable="true">
 
             <ImageView
                 android:id="@+id/iv_facebook_ico"
@@ -78,23 +79,16 @@
         </LinearLayout>
 
         <!-- NickName editText -->
-        <RelativeLayout
+        <es.molestudio.photochop.View.AppEditText
+            android:id="@+id/et_email"
+            style="@style/AppTextField.EditText"
             android:layout_width="300dp"
-            android:layout_height="wrap_content">
-
-            <es.molestudio.photochop.View.AppEditText
-                android:id="@+id/et_email"
-                style="@style/AppTextField.EditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="80dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="2dp"
-                android:inputType="textPersonName|textNoSuggestions"
-                android:hint="@string/hint_email"/>
-
-
-        </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingBottom="2dp"
+            android:inputType="textPersonName|textNoSuggestions"
+            android:hint="@string/hint_email"/>
 
         <!-- Password edittext -->
         <RelativeLayout
@@ -108,7 +102,7 @@
                 style="@style/AppTextField.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="80dp"
+                android:paddingLeft="5dp"
                 android:paddingRight="60dp"
                 android:paddingBottom="2dp"
                 android:inputType="textPassword|textNoSuggestions"
@@ -138,7 +132,8 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="16dp"
+            android:clickable="true">
 
 
             <es.molestudio.photochop.View.AppTextView
@@ -153,7 +148,6 @@
 
         <!-- Forgot Password text button -->
         <RelativeLayout
-            android:id="@+id/btn_forgot_pass"
             android:layout_marginTop="10dp"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
@@ -162,17 +156,27 @@
             android:paddingLeft="10dp">
 
             <es.molestudio.photochop.View.AppTextView
-                android:id="@+id/tv_fgot_password"
+                android:id="@+id/tv_forgot_pass"
                 style="@style/AppTextField.Light.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/btn_forgot_pass"/>
+                android:text="@string/btn_forgot_pass"
+                android:clickable="true"/>
 
         </RelativeLayout>
 
 
 
     </LinearLayout>
+
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
 
 
 

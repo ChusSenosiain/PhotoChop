@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import es.molestudio.photochop.R;
+import es.molestudio.photochop.controller.util.AppUtils;
 import es.molestudio.photochop.model.Constants;
 
 public class SplashActivity extends ActionBarActivity {

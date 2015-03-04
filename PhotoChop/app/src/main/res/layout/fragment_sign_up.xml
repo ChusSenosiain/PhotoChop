@@ -25,7 +25,8 @@
             android:background="@drawable/btn_facebook_loggin"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:clickable="true">
 
             <ImageView
                 android:id="@+id/ivFacebookIco"
@@ -85,44 +86,33 @@
             android:orientation="vertical">
 
             <!-- NickName editText -->
-            <RelativeLayout
+            <es.molestudio.photochop.View.AppEditText
+                android:id="@+id/et_nick_name"
+                style="@style/AppTextField.EditText"
+                android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <es.molestudio.photochop.View.AppEditText
-                    android:id="@+id/et_nick_name"
-                    style="@style/AppTextField.EditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="80dp"
-                    android:paddingRight="10dp"
-                    android:paddingBottom="2dp"
-                    android:inputType="textPersonName|textNoSuggestions"
-                    android:hint="@string/hint_nick_name"/>
-
-            </RelativeLayout>
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingBottom="2dp"
+                android:inputType="textPersonName|textNoSuggestions"
+                android:hint="@string/hint_nick_name"/>
 
 
             <!-- Email editText -->
-            <RelativeLayout
+            <es.molestudio.photochop.View.AppEditText
+                android:id="@+id/et_email"
+                style="@style/AppTextField.EditText"
+                android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <es.molestudio.photochop.View.AppEditText
-                    android:id="@+id/et_email"
-                    style="@style/AppTextField.EditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="80dp"
-                    android:paddingRight="10dp"
-                    android:paddingBottom="2dp"
-                    android:inputType="textEmailAddress|textNoSuggestions"
-                    android:hint="@string/hint_email"/>
+                android:paddingLeft="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="2dp"
+                android:inputType="textEmailAddress|textNoSuggestions"
+                android:hint="@string/hint_email"/>
 
 
-            </RelativeLayout>
 
             <!-- Password with editText -->
             <RelativeLayout
@@ -135,7 +125,7 @@
                     style="@style/AppTextField.EditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="80dp"
+                    android:paddingLeft="5dp"
                     android:paddingRight="60dp"
                     android:paddingBottom="2dp"
                     android:inputType="textPassword|textNoSuggestions"/>
@@ -166,7 +156,8 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="16dp"
+            android:clickable="true">
 
             <es.molestudio.photochop.View.AppTextView
                 style="@style/AppTextField.ButtonText"
@@ -179,5 +170,13 @@
 
 
     </LinearLayout>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
 
 </RelativeLayout>
