@@ -35,7 +35,7 @@ public class GalleryActivity extends ActionBarActivity {
         if (manager.findFragmentById(R.id.fragment_holder) == null) {
 
             Bundle fragmentArg = new Bundle();
-            fragmentArg.putBoolean(GridFragment.ARG_SELECTION, true);
+            fragmentArg.putBoolean(GridFragment.ARG_SELECT_FROM_GALLERY, true);
 
             manager.beginTransaction()
                     .add(R.id.fragment_holder, GridFragment.newInstance(fragmentArg))

@@ -55,6 +55,8 @@
     <!-- Facebool login-->
     <string name="app_id">566916756778353</string>
     <string name="title_facebook_login">Log In with Facebook</string>
+    <string name="user_logout_ok">You are log out!</string>
+    <string name="user_logout_error">Ops! There was a problem on logout. Please try again</string>
 
 
 </resources>

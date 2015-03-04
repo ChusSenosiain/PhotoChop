@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -51,7 +52,6 @@ public class MainActivity extends ActionBarActivity
 
 
     private static final int RQ_CAPTURE_IMAGE = 1001;
-    private static final int RQ_SELECT_IMAGE = 1002;
     private Location mLocation;
     private MyLocation mMyLocation;
 
@@ -60,8 +60,8 @@ public class MainActivity extends ActionBarActivity
     private LinearLayout mDrawerLinearLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
-    private ActionBar mActionBar;
     private FloatingActionsMenu mFloatingActionsMenu;
+    private GridFragment mGridFragment;
 
 
     @Override
@@ -90,14 +90,16 @@ public class MainActivity extends ActionBarActivity
 
         // Show the grid
         FragmentManager manager = getSupportFragmentManager();
-        if (manager.findFragmentById(R.id.fragment_holder) == null) {
+        mGridFragment = (GridFragment) manager.findFragmentById(R.id.fragment_holder);
+
+        if (mGridFragment == null) {
+            mGridFragment = (GridFragment) GridFragment.newInstance(null);
             manager.beginTransaction()
-                    .add(R.id.fragment_holder, GridFragment.newInstance(null))
+                    .add(R.id.fragment_holder, mGridFragment)
                     .commit();
         }
 
         // Set up the drawer
-
 
         // Left Drawer items
 
@@ -147,15 +149,6 @@ public class MainActivity extends ActionBarActivity
         btnCamera.setOnClickListener(this);
         btnImportFromGallery.setOnClickListener(this);
         mDrawerList.setOnItemClickListener(this);
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        Log.d("On resume del activity");
-
 
     }
 
@@ -231,10 +224,16 @@ public class MainActivity extends ActionBarActivity
             if (requestCode == RQ_CAPTURE_IMAGE) {
                 finishLocationService();
                 saveImage(data.getData());
+                mGridFragment.updateImagesFromBD();
             }
             // Image(s) from gallery
-            else if (requestCode == RQ_SELECT_IMAGE) {
-                saveImages((ArrayList<Image>) data.getSerializableExtra(""));
+            else if (requestCode == GalleryActivity.RQ_SELECT_IMAGE) {
+                if (data != null) {
+                    boolean newImages = data.getBooleanExtra(GridFragment.NEW_IMAGES_ON_BD, false);
+                    if (newImages){
+                        mGridFragment.updateImagesFromBD();
+                    }
+                }
             }
         }
 
@@ -270,22 +269,10 @@ public class MainActivity extends ActionBarActivity
 
     }
 
-    private void saveImages(ArrayList<Image> images) {
-        DataStorage.getDataStorage(this).insertImages(images);
-    }
-
-
-
     @Override
     public void onLocationChanged(Location location) {
         mLocation = location;
         Log.d("Location received " + location.getLatitude() + " " + location.getLongitude());
-
-        // The first one is the last know location, the second location received
-        // is the actual location
-        /*if (mLocationCounter == Constants.MAX_LOCATION_INTENTS) {
-            finishLocationService();
-        }*/
     }
 
     private void finishLocationService() {
@@ -315,15 +302,16 @@ public class MainActivity extends ActionBarActivity
                 break;
             // Logout
             case 2:
-                if (ParseUser.getCurrentUser() != null) {
-                    logOut();
-                }
+                logOut();
                 break;
         }
     }
 
     private void logOut() {
-        LoginManager.getLoginManager(this).signOut(this);
+
+        if (ParseUser.getCurrentUser() != null) {
+            LoginManager.getLoginManager(this).signOut(this);
+        }
     }
 
     private void selectItem(int position) {
@@ -360,6 +348,14 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onDone(User user, Exception error) {
+
+        if (error == null) {
+            Toast.makeText(this, getString(R.string.user_logout_ok), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, getString(R.string.user_logout_error), Toast.LENGTH_SHORT).show();
+        }
+
+
 
     }
 }

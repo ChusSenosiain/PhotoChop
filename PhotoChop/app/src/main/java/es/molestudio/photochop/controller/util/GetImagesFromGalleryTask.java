@@ -18,7 +18,6 @@ import es.molestudio.photochop.model.Image;
 public class GetImagesFromGalleryTask extends AsyncTask<Void, ArrayList<Image>, ArrayList<Image>> {
 
     public interface ImageReaderListener {
-        public void onProgressUpdate(ArrayList<Image> image);
         public void onFinish(ArrayList<Image> image);
     }
 
@@ -41,19 +40,19 @@ public class GetImagesFromGalleryTask extends AsyncTask<Void, ArrayList<Image>, 
     @Override
     protected ArrayList<Image> doInBackground(Void... params) {
 
-        // externa e internal
-
-
         ArrayList<Image> images = new ArrayList<>();
 
         final String orderBy = MediaStore.Images.Media.DATE_TAKEN;
-        int imageCount = 0;
 
         // SD Card
         Cursor result = mContext.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, this.mColumns, null, null, orderBy + " DESC");
         if (result.moveToFirst()) {
             do {
-                images.add(createImage(result));
+
+                Image image = createImage(result);
+                if (image != null) {
+                    images.add(image);
+                }
             } while (result.moveToNext());
         }
         result.close();
@@ -79,10 +78,7 @@ public class GetImagesFromGalleryTask extends AsyncTask<Void, ArrayList<Image>, 
         mImageReaderListener.onFinish(images);
     }
 
-    @Override
-    protected void onProgressUpdate(ArrayList<Image>... values) {
-        super.onProgressUpdate(values);
-    }
+
 
 
     private Image createImage(Cursor result) {

@@ -23,7 +23,6 @@ import es.molestudio.photochop.controller.fragment.SignUpFragment;
 import es.molestudio.photochop.model.User;
 
 public class LogInActivity extends ActionBarActivity implements
-    ViewPager.OnPageChangeListener,
     SignUpFragment.FinishSignUpListener {
 
     public static final int RQ_LOGGIN = 1004;
@@ -66,84 +65,11 @@ public class LogInActivity extends ActionBarActivity implements
                 .getDisplayMetrics());
         mViewPager.setPageMargin(pageMargin);
         mViewPager.setOffscreenPageLimit(0);
-
-
         mTabs.setViewPager(mViewPager);
-        mTabs.setOnPageChangeListener(this);
-
 
         mViewPager.setCurrentItem(0, true);
 
     }
-
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
-    }
-
-    @Override
-    public void onFinishSingUp(User user) {
-        // Go to the sign in page
-        mViewPager.setCurrentItem(0);
-    }
-
-    public class MyPagerAdapter extends FragmentPagerAdapter {
-
-
-            public MyPagerAdapter(FragmentManager fm) {
-                super(fm);
-            }
-
-            @Override
-            public CharSequence getPageTitle(int position) {
-                switch (position) {
-                    case 0:
-                        return getString(R.string.title_signin);
-                    case 1:
-                        return getString(R.string.title_singup);
-                }
-                return null;
-            }
-
-            @Override
-            public int getCount() {
-                return 2;
-            }
-
-            @Override
-            public Fragment getItem(int position) {
-                // getItem is called to instantiate the fragment for the given page.
-                // Return a PlaceholderFragment (defined as a static inner class below).
-
-                Fragment fragment;
-
-                switch (position) {
-                    case 0:
-                        fragment = SignInFragment.newInstance();
-                        break;
-                    case 1:
-                        fragment = SignUpFragment.newInstance();
-                        break;
-                    default:
-                        fragment = SignInFragment.newInstance();
-                }
-
-                return fragment;
-            }
-
-
-        }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -159,4 +85,68 @@ public class LogInActivity extends ActionBarActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         ParseFacebookUtils.finishAuthentication(requestCode, resultCode, data);
     }
+
+
+    ////////////////////////////////////////////////////////////////////
+    // INTERFACE IMPLEMENTATION
+    ////////////////////////////////////////////////////////////////////
+    // SignUpFragment.FinishSignUpListener
+    @Override
+    public void onFinishSingUp(User user) {
+        // Go to the sign in page
+        mViewPager.setCurrentItem(0, true);
+    }
+
+
+    ////////////////////////////////////////////////////////////////////
+    // fragment pager adapter
+    ////////////////////////////////////////////////////////////////////
+    public class MyPagerAdapter extends FragmentPagerAdapter {
+
+
+        public MyPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return getString(R.string.title_signin);
+                case 1:
+                    return getString(R.string.title_singup);
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+            Fragment fragment;
+
+            switch (position) {
+                case 0:
+                    fragment = SignInFragment.newInstance();
+                    break;
+                case 1:
+                    fragment = SignUpFragment.newInstance();
+                    break;
+                default:
+                    fragment = SignInFragment.newInstance();
+            }
+
+            return fragment;
+        }
+
+
+    }
+
+
+
+
 }

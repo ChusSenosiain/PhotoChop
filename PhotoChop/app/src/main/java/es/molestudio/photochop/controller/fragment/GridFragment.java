@@ -19,8 +19,6 @@ import android.widget.CheckBox;
 import android.widget.GridView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import es.molestudio.photochop.R;
 import es.molestudio.photochop.controller.DataStorage;
@@ -28,8 +26,6 @@ import es.molestudio.photochop.controller.activity.ImageActivity;
 import es.molestudio.photochop.controller.activity.SwipeGalleryActivity;
 import es.molestudio.photochop.controller.adapter.ADPGridImage;
 import es.molestudio.photochop.controller.util.GetImagesFromGalleryTask;
-import es.molestudio.photochop.controller.util.ImageLoader;
-import es.molestudio.photochop.controller.util.Log;
 import es.molestudio.photochop.model.Image;
 
 /**
@@ -42,11 +38,14 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
         ActionMode.Callback{
 
 
-    public static final String ARG_SELECTION = "es.molestudio.photochop.controller.fragment.GridFragment.SelectFromGallery";
+    public static final String ARG_SELECT_FROM_GALLERY = "es.molestudio.photochop.controller.fragment.GridFragment.ARG_SELECT_FROM_GALLERY";
+    public static final String NEW_IMAGES_ON_BD = "es.molestudio.photochop.controller.activity.GridFragment.NEW_IMAGES_ON_BD";
+
 
     private GridView mPhotoGrid;
     private ADPGridImage mADPGridImage;
-    private Boolean mIsInSelecionMode = false;    private ActionMode mActionMode;
+    private Boolean mSelectImagesFromGallery = false;
+    private ActionMode mActionMode;
     private ActionBar mActionBar;
     private int mSelectedItemsCount;
 
@@ -67,7 +66,7 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mIsInSelecionMode = getArguments().getBoolean(ARG_SELECTION, false);
+            mSelectImagesFromGallery = getArguments().getBoolean(ARG_SELECT_FROM_GALLERY, false);
         }
 
         setHasOptionsMenu(true);
@@ -84,7 +83,7 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
 
         mPhotoGrid = (GridView) root.findViewById(R.id.image_grid);
 
-        mADPGridImage = new ADPGridImage(getActivity(), this);
+        mADPGridImage = new ADPGridImage(getActivity(), mPhotoGrid, this);
         mPhotoGrid.setAdapter(mADPGridImage);
 
         mPhotoGrid.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE);
@@ -93,14 +92,13 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
 
         ArrayList<Image> images = new ArrayList<Image>();
 
-        if (mIsInSelecionMode) {
+        if (mSelectImagesFromGallery) {
             // Images From Gallery
             GetImagesFromGalleryTask getImagesFromGalleryTask = new GetImagesFromGalleryTask(getActivity(), this);
             getImagesFromGalleryTask.execute();
         } else {
             // Images From BD
-            images = DataStorage.getDataStorage(getActivity()).getImages();
-            updateImages(images);
+            updateImagesFromBD();
         }
 
         return root;
@@ -124,7 +122,7 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
 
         Image image = (Image) mADPGridImage.getItem(position);
 
-        if (!mIsInSelecionMode) {
+        if (!mSelectImagesFromGallery) {
             Intent imageGallery = new Intent(getActivity(), SwipeGalleryActivity.class);
             imageGallery.putExtra(SwipeGalleryActivity.EXTRA_IMAGE_ID, image.getImageId());
             startActivity(imageGallery);
@@ -135,11 +133,6 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
         }
     }
 
-    // GetImagesFromGalleryTask.ImageReaderListener implementation
-    @Override
-    public void onProgressUpdate(ArrayList<Image> image) {
-
-    }
 
     @Override
     public void onFinish(ArrayList<Image> images) {
@@ -168,12 +161,12 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
                 // 1 o varios items
                 if (selectedItemCount == 1 && mSelectedItemsCount != 1) {
                     menu.clear();
-                    if (mIsInSelecionMode) {
+                    if (mSelectImagesFromGallery) {
                         inflater.inflate(R.menu.menu_images_selection, menu);
                     } else {
                         inflater.inflate(R.menu.menu_images_main, menu);
                     }
-                } else if (selectedItemCount > 1 && mSelectedItemsCount == 1 && mIsInSelecionMode) {
+                } else if (selectedItemCount > 1 && mSelectedItemsCount == 1 && mSelectImagesFromGallery) {
                     menu.clear();
                     inflater.inflate(R.menu.menu_images_multiple_selection, menu);
                 }
@@ -202,7 +195,6 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
         switch (menuItem.getItemId()) {
             case R.id.action_done:
                 importImagesToBD();
-                getActivity().finish();
                 break;
             case R.id.action_delete:
                 deleteImagesFromBD();
@@ -216,7 +208,17 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
     }
 
     private void importImagesToBD() {
-        DataStorage.getDataStorage(getActivity()).insertImages(mADPGridImage.getSelectedImages());
+
+        ArrayList<Image> newImages = DataStorage.getDataStorage(getActivity()).insertImages(mADPGridImage.getSelectedImages());
+
+        if (newImages.size() > 0) {
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra(NEW_IMAGES_ON_BD, true);
+            getActivity().setResult(Activity.RESULT_OK, returnIntent);
+        }
+
+        getActivity().finish();
+
     }
 
     private void deleteImagesFromBD() {
@@ -231,7 +233,6 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
         DataStorage.getDataStorage(getActivity()).updateImages(hiddenImages);
     }
 
-
     @Override
     public void onDestroyActionMode(ActionMode actionMode) {
         if (mActionMode != null) {
@@ -241,15 +242,9 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
 
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Comprobar si ha habido cambios en la BD
-        ArrayList<Image> images = DataStorage.getDataStorage(getActivity()).getImages();
-        updateImages(images);
+    public void updateImagesFromBD() {
+        updateImages(DataStorage.getDataStorage(getActivity()).getImages());
     }
-
 
     private void updateImages(ArrayList<Image> images) {
         mADPGridImage.updateImages(images);

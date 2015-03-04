@@ -130,9 +130,12 @@ public class SQLiteManager implements IDataManager {
         ArrayList<Image> imagesWithId = new ArrayList<Image>();
 
         for (Image image: images) {
+            // If the image already exists, the database return error
             idImage = db.insert("image", null, createContentImage(image));
-            image.setImageId((int) idImage);
-            imagesWithId.add(image);
+            if (idImage > 0) {
+                image.setImageId((int) idImage);
+                imagesWithId.add(image);
+            }
         }
         db.setTransactionSuccessful();
         db.endTransaction();

@@ -51,9 +51,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.beginTransaction();
 
+        // Tables
         db.execSQL("CREATE TABLE \"image\" (\"imageId\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , \"internalId\" TEXT , \"name\" TEXT, \"description\" TEXT, \"uri\" TEXT, \"date\" DATETIME, \"latitude\" DOUBLE, \"longitude\" DOUBLE, \"categoryId\" INTEGER DEFAULT 0, \"subcategoryId\" INTEGER DEFAULT 0, \"favorite\" BOOL NOT NULL  DEFAULT false, \"hidden\" BOOL NOT NULL  DEFAULT false)");
         db.execSQL("CREATE TABLE \"category\" (\"categoryId\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , \"name\" TEXT, \"description\" TEXT)");
         db.execSQL("CREATE TABLE \"subcategory\" (\"subcategoryId\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , \"categoryId\" INTEGER NOT NULL , \"name\" TEXT NOT NULL , \"description\" TEXT)");
+        db.execSQL("CREATE TABLE \"comment\" (\"comentId\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , \"userId\" TEXT NOT NULL , \"comment\" TEXT)");
+
+        // Indexes
+        db.execSQL("CREATE UNIQUE INDEX \"idx_image_imageInternalId\" ON \"image\" (\"internalId\" DESC)");
+        db.execSQL("CREATE UNIQUE INDEX \"idx_image_imageId\" ON \"image\" (\"imageId\" DESC)");
+        db.execSQL("CREATE INDEX \"idx_subcategory\" ON \"subcategory\" (\"categoryId\" DESC)");
 
         db.setTransactionSuccessful();
         db.endTransaction();

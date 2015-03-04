@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.GridView;
 import android.widget.ImageView;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ public class ADPGridImage extends BaseAdapter  {
     private boolean mIsInSelectionMode = false;
     private ItemSelectorListener mListener;
     private ImageLoader mImageLoader;
+    private View mView;
 
 
     public interface ItemSelectorListener {
@@ -35,11 +37,12 @@ public class ADPGridImage extends BaseAdapter  {
     }
 
 
-    public ADPGridImage(Context context, ItemSelectorListener listener) {
+    public ADPGridImage(Context context, View view, ItemSelectorListener listener) {
         mContext = context;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mListener = listener;
         mImageLoader = new ImageLoader(mContext);
+        mView = view;
     }
 
     public void updateImages(ArrayList<Image> images) {
@@ -78,7 +81,24 @@ public class ADPGridImage extends BaseAdapter  {
 
         if (isInSelectionMode != mIsInSelectionMode) {
             mIsInSelectionMode = isInSelectionMode;
-            this.notifyDataSetChanged();
+            changeVisibleViews();
+        }
+    }
+
+
+    private void changeVisibleViews(){
+
+        GridView gridView = (GridView) mView;
+        if (gridView != null) {
+
+            int firstVisibleItem = gridView.getFirstVisiblePosition();
+            int lastVisibleItem = gridView.getLastVisiblePosition();
+
+            for (int i = firstVisibleItem; i <= lastVisibleItem; i++) {
+                View view = gridView.getChildAt(i);
+                CheckBox chk = (CheckBox) view.findViewById(R.id.chk_selection);
+                chk.setVisibility(mIsInSelectionMode ? View.VISIBLE : View.INVISIBLE);
+            }
         }
     }
 
