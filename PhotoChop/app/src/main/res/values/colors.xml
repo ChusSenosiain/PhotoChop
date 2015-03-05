@@ -9,6 +9,7 @@
     <color name="icon_grey">#ffababab</color>
     <color name="divider">#18000000</color>
     <color name="image_text_background">#60000000</color>
+    <color name="edit_text_hint">@color/icon_grey</color>
 
 
 
@@ -16,12 +17,14 @@
     <color name="primary_color">#9C27B0</color> <!-- Action bar color -->
     <color name="light_primary_color">#E1BEE7</color>
     <color name="accent_color">#FF4081</color>
-    <color name="floating_action_button">@color/accent_color</color>
-    <color name="floating_action_button_push">@color/light_primary_color</color>
+    <color name="app_button">@color/accent_color</color>
+    <color name="app_button_push">@color/light_primary_color</color>
 
     <color name="navigation_drawer_background">#727272</color>
 
     <color name="btn_facebook_login">#4285F4</color>
+    <color name="btn_facebook_login_push">#404285F4</color>
+
 
 
     <!-- Edit text -->

@@ -18,7 +18,7 @@ import es.molestudio.photochop.model.SubCategory;
 /**
  * Created by Chus on 31/12/14.
  */
-public class SQLiteManager implements IDataManager {
+public class DataBaseManagerWithSQLite implements DataBaseManager {
 
     ///////////////////////////////////////////////////////////////////////////////
     /////                   CRUD OPERATIONS                                  /////
@@ -46,7 +46,7 @@ public class SQLiteManager implements IDataManager {
 
     private Context mContext;
 
-    public SQLiteManager(Context context) {
+    public DataBaseManagerWithSQLite(Context context) {
         mContext = context;
     }
 
@@ -382,6 +382,7 @@ public class SQLiteManager implements IDataManager {
 
         try {
             image.setImageId(cursor.getInt(cursor.getColumnIndex(CN_IMAGE_ID)));
+            image.setImageName(cursor.getString(cursor.getColumnIndex(CN_NAME)));
             image.setImageUri(Uri.parse(cursor.getString(cursor.getColumnIndex(CN_URI))));
             image.setImageDate(AppUtils.getDateFromString(cursor.getString(cursor.getColumnIndex(CN_DATE))));
             image.setImageLatitude(cursor.getDouble(cursor.getColumnIndex(CN_LAT)));

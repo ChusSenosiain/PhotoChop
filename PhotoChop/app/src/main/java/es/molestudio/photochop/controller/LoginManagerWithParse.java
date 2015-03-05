@@ -18,7 +18,7 @@ import es.molestudio.photochop.model.User;
 /**
  * Created by Chus on 04/03/15.
  */
-public class ParseLoginManager implements ILoginManager {
+public class LoginManagerWithParse implements LoginManager {
 
     public static final int RQ_SIGNIN_FACEBOOK = 25365;
 
@@ -26,7 +26,7 @@ public class ParseLoginManager implements ILoginManager {
     private LoginActionListener mLoginActionListener;
     private Context mContext;
 
-    public ParseLoginManager(Context context) {
+    public LoginManagerWithParse(Context context) {
         mContext = context;
     }
 
@@ -72,8 +72,9 @@ public class ParseLoginManager implements ILoginManager {
 
         ParseUser parseUser = new ParseUser();
         parseUser.setEmail(user.getUserEmail());
-        parseUser.setUsername(user.getUserNickName());
+        parseUser.setUsername(user.getUserEmail());
         parseUser.setPassword(user.getUserPassword());
+        parseUser.put("nickname", user.getUserNickName());
 
         try {
             parseUser.signUpInBackground(new SignUpCallback() {

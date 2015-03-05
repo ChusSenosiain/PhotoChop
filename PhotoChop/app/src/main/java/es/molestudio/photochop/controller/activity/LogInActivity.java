@@ -95,6 +95,9 @@ public class LogInActivity extends ActionBarActivity implements
     public void onFinishSingUp(User user) {
         // Go to the sign in page
         mViewPager.setCurrentItem(0, true);
+        SignInFragment fragment = (SignInFragment) mPagerAdapter.getItem(0);
+        fragment.setUserData(user);
+
     }
 
 

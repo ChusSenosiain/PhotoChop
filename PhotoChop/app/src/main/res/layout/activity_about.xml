@@ -1,0 +1,44 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="es.molestudio.photochop.controller.activity.SplashActivity"
+                android:background="@color/primary_color">
+
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_centerInParent="true">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/logo_secret"
+            android:layout_centerInParent="true"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/AppTextField.Light.Medium"
+            android:textColor="@android:color/white"
+            android:text="This proyect was developer for Chus Senosiain. If yout want know more about me and my projects, you can contact me on twiter by @chusenca."/>
+
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/AppTextField.Light.Small"
+            android:textColor="@android:color/white"
+            android:text="Your secret photo and the owner of this app, doesn't has responsability on the content that users can upload/show/hide/save/blah blah blah...with the app."/>
+
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

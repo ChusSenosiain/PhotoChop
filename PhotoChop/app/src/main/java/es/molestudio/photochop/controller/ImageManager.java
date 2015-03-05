@@ -1,13 +1,17 @@
 package es.molestudio.photochop.controller;
 
-import android.content.Context;
+import es.molestudio.photochop.model.Image;
 
 /**
- * Created by Chus on 04/03/15.
+ * Created by Chus on 05/03/15.
  */
-public class ImageManager {
+public interface ImageManager {
 
-    public static IImageManager getImageManager(Context context) {
-        return new ParseImageManager(context);
+    public interface ImageManagerListener {
+        public void onFinish(Image image, Exception err);
     }
+
+    public void hideImage(Image image, ImageManagerListener listener);
+
+    public void showImage(Image image, ImageManagerListener listener);
 }

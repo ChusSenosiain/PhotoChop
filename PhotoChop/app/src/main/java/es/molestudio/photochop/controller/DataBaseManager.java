@@ -9,7 +9,7 @@ import es.molestudio.photochop.model.SubCategory;
 /**
  * Created by Chus on 18/01/15.
  */
-public interface IDataManager {
+public interface DataBaseManager {
 
 
     // Image

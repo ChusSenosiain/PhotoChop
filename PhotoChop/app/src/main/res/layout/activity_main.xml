@@ -48,7 +48,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     app:fab_addButtonColorNormal="@color/accent_color"
-                    app:fab_addButtonColorPressed="@color/floating_action_button_push"
+                    app:fab_addButtonColorPressed="@color/app_button_push"
                     app:fab_labelStyle="@style/menu_labels_style"
                     android:layout_marginBottom="16dp"
                     android:layout_marginRight="16dp"
@@ -60,7 +60,7 @@
                         android:layout_height="wrap_content"
                         app:fab_icon="@drawable/ic_view_module_white_24dp"
                         app:fab_colorNormal="@color/accent_color"
-                        app:fab_colorPressed="@color/floating_action_button_push"/>
+                        app:fab_colorPressed="@color/app_button_push"/>
 
                     <com.getbase.floatingactionbutton.FloatingActionButton
                         android:id="@+id/btn_new_photo"
@@ -68,7 +68,7 @@
                         android:layout_height="wrap_content"
                         app:fab_icon="@drawable/ic_photo_camera_white_24dp"
                         app:fab_colorNormal="@color/accent_color"
-                        app:fab_colorPressed="@color/floating_action_button_push"/>
+                        app:fab_colorPressed="@color/app_button_push"/>
 
                 </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
@@ -97,18 +97,17 @@
                     <ImageView
                         android:id="@+id/iv_user_image"
                         style="@style/AppImageView.Medium"
-                        android:src="@drawable/initials_name_circle"
+                        android:src="@drawable/ic_account_circle_white_48dp"
                         />
 
                     <LinearLayout
-                        android:layout_alignTop="@id/iv_user_image"
-                        android:layout_alignBottom="@id/iv_user_image"
                         android:layout_toRightOf="@id/iv_user_image"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:paddingLeft="15dp"
-                        android:paddingRight="15dp">
+                        android:paddingRight="15dp"
+                        android:layout_centerVertical="true">
 
                         <es.molestudio.photochop.View.AppTextView
                             android:id="@+id/tv_user_nickname"
@@ -116,6 +115,15 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="User NickName"
+                            android:textColor="@android:color/white"
+                            android:layout_marginBottom="5dp"/>
+
+                        <es.molestudio.photochop.View.AppTextView
+                            android:id="@+id/tv_subtitle"
+                            style="@style/AppTextField.Light.Medium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Subtitle"
                             android:textColor="@android:color/white"/>
 
                     </LinearLayout>

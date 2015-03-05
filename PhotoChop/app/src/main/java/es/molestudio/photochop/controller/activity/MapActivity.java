@@ -18,7 +18,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 
 import es.molestudio.photochop.R;
-import es.molestudio.photochop.controller.DataStorage;
+import es.molestudio.photochop.controller.DataBaseManagerWrap;
 import es.molestudio.photochop.controller.util.Log;
 import es.molestudio.photochop.model.Image;
 
@@ -94,7 +94,7 @@ implements OnMapReadyCallback,
             mMap.setOnMarkerDragListener(this);
         } else {
             // Mostrar todas las imagenes de la galeria
-            ArrayList<Image> images = DataStorage.getDataStorage(this).getImages();
+            ArrayList<Image> images = DataBaseManagerWrap.getDataBaseManager(this).getImages();
             if (images != null) {
                 for (Image image: images) {
                     drawMarkOnMap(image);

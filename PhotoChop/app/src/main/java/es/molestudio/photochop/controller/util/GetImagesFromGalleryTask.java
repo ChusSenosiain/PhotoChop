@@ -18,7 +18,7 @@ import es.molestudio.photochop.model.Image;
 public class GetImagesFromGalleryTask extends AsyncTask<Void, ArrayList<Image>, ArrayList<Image>> {
 
     public interface ImageReaderListener {
-        public void onFinish(ArrayList<Image> image);
+        public void onFinishReadFromGallery(ArrayList<Image> image);
     }
 
 
@@ -75,7 +75,7 @@ public class GetImagesFromGalleryTask extends AsyncTask<Void, ArrayList<Image>, 
     @Override
     protected void onPostExecute(ArrayList<Image> images) {
         super.onPostExecute(images);
-        mImageReaderListener.onFinish(images);
+        mImageReaderListener.onFinishReadFromGallery(images);
     }
 
 
@@ -105,7 +105,7 @@ public class GetImagesFromGalleryTask extends AsyncTask<Void, ArrayList<Image>, 
         image.setImageInternalId(id);
 
         try {
-            image.setImageDate(new Date(Integer.valueOf(date)));
+            image.setImageDate(new Date(Long.valueOf(date)));
         } catch (Exception e) {}
 
         return image;

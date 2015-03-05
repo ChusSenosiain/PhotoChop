@@ -45,16 +45,7 @@ public class SplashActivity extends ActionBarActivity {
 
                 super.onPostExecute(o);
 
-                Intent mainIntent = null;
-
-                /*
-                if (UserManager.getUserLogged(SplashActivity.this) != null) {
-                    mainIntent = new Intent(SplashActivity.this, MainActivity.class);
-                } else {
-                    mainIntent = new Intent(SplashActivity.this, SignActivity.class);
-                }*/
-
-                mainIntent = new Intent(SplashActivity.this, MainActivity.class);
+                Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(mainIntent);
                 SplashActivity.this.finish();
             }

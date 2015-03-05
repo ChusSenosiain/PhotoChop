@@ -23,7 +23,7 @@
             android:id="@+id/btn_facebook_login"
             android:layout_width="270dp"
             android:layout_height="50dp"
-            android:background="@drawable/btn_facebook_loggin"
+            android:background="@drawable/background_btn_facebook"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:layout_marginBottom="16dp"
@@ -56,7 +56,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:layout_marginTop="25dp"
-            android:layout_marginBottom="25dp">
+            android:layout_marginBottom="10dp">
 
             <View
                 style="@style/Divider"
@@ -78,49 +78,52 @@
 
         </LinearLayout>
 
-        <!-- NickName editText -->
-        <es.molestudio.photochop.View.AppEditText
-            android:id="@+id/et_email"
-            style="@style/AppTextField.EditText"
+        <!-- Edit text Container -->
+        <LinearLayout
             android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingBottom="2dp"
-            android:inputType="textPersonName|textNoSuggestions"
-            android:hint="@string/hint_email"/>
+            android:layout_height="100dp"
+            android:orientation="vertical">
 
-        <!-- Password edittext -->
-        <RelativeLayout
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="16dp"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content">
-
+            <!-- NickName editText -->
             <es.molestudio.photochop.View.AppEditText
-                android:id="@+id/et_password"
-                style="@style/AppTextField.EditText"
+                    android:id="@+id/et_email"
+                    style="@style/AppTextField.EditText"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:inputType="textPersonName|textNoSuggestions"
+                    android:hint="@string/hint_email"/>
+
+            <!-- Password with editText -->
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                android:paddingRight="60dp"
-                android:paddingBottom="2dp"
-                android:inputType="textPassword|textNoSuggestions"
-                android:hint="@string/hint_password"/>
+                android:layout_weight="1"
+                android:gravity="bottom">
 
-            <es.molestudio.photochop.View.AppTextView
-                android:id="@+id/tv_show_password"
-                style="@style/AppTextField.Light.Medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="5dp"
-                android:layout_alignParentRight="true"
-                android:layout_alignBaseline="@id/et_password"
-                android:text="@string/txt_show"
-                android:gravity="right"
-                android:textColor="@color/clear_grey"/>
+                <es.molestudio.photochop.View.AppEditText
+                    android:id="@+id/et_password"
+                    style="@style/AppTextField.EditText"
+                    android:layout_width="match_parent"
+                    android:paddingRight="60dp"
+                    android:hint="@string/hint_password"
+                    android:inputType="textPassword|textNoSuggestions"/>
 
-        </RelativeLayout>
+                <es.molestudio.photochop.View.AppTextView
+                    android:id="@+id/tv_show_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="7dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignBaseline="@id/et_password"
+                    style="@style/AppTextField.Light.Medium"
+                    android:text="@string/txt_show"
+                    android:textColor="@color/clear_grey"
+                    android:gravity="right"/>
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
 
 
         <!-- Login Button -->
@@ -128,7 +131,7 @@
             android:id="@+id/btn_login"
             android:layout_width="270dp"
             android:layout_height="50dp"
-            android:background="@drawable/btn_app"
+            android:background="@drawable/background_btn_app"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:layout_marginBottom="16dp"
@@ -148,7 +151,7 @@
 
         <!-- Forgot Password text button -->
         <RelativeLayout
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="25dp"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:gravity="right"

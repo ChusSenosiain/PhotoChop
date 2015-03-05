@@ -1,7 +1,9 @@
 package es.molestudio.photochop.controller.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +16,14 @@ import com.parse.ParseUser;
 
 import es.molestudio.photochop.R;
 import es.molestudio.photochop.View.AppEditText;
-import es.molestudio.photochop.controller.ILoginManager;
+import es.molestudio.photochop.View.AppTextView;
 import es.molestudio.photochop.controller.LoginManager;
+import es.molestudio.photochop.controller.LoginManagerWrap;
 import es.molestudio.photochop.model.User;
 
 
 public class SignUpFragment extends Fragment implements View.OnClickListener,
-        ILoginManager.LoginActionListener {
+        LoginManager.LoginActionListener {
 
     public interface FinishSignUpListener {
         public void onFinishSingUp(User user);
@@ -61,8 +64,29 @@ public class SignUpFragment extends Fragment implements View.OnClickListener,
 
         RelativeLayout btnSignUp = (RelativeLayout) root.findViewById(R.id.btn_signup);
         RelativeLayout btnSignInFacebook = (RelativeLayout) root.findViewById(R.id.btn_facebook_login);
-        btnSignUp.setEnabled(false);
 
+        final AppTextView btnShowPass = (AppTextView) root.findViewById(R.id.tv_show_password);
+        mEtPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        btnShowPass.setTag(false);
+
+        btnShowPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                boolean show = (Boolean) btnShowPass.getTag();
+
+                if (show) {
+                    mEtPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+                    btnShowPass.setText(getString(R.string.txt_hide_pass));
+                } else {
+                    mEtPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+                    btnShowPass.setText(getString(R.string.txt_show));
+                }
+
+                btnShowPass.setTag(!show);
+
+            }
+        });
 
         btnSignUp.setOnClickListener(this);
         btnSignInFacebook.setOnClickListener(this);
@@ -119,15 +143,31 @@ public class SignUpFragment extends Fragment implements View.OnClickListener,
         User user = new User();
         user.setUserEmail(mEtEmail.getText().toString());
         user.setUserNickName(mEtNickName.getText().toString());
-        user.setUserPassword(mEtPassword.toString());
+        user.setUserPassword(mEtPassword.getText().toString());
 
-        LoginManager.getLoginManager(getActivity()).signUpWithEmail(user, this);
+        LoginManagerWrap.getLoginManager(getActivity()).signUpWithEmail(user, this);
 
     }
 
     private void loginWithFacebook(){
-        LoginManager.getLoginManager(getActivity()).signInWithFacebook(this);
+        LoginManagerWrap.getLoginManager(getActivity()).signInWithFacebook(this);
     }
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mFinishSignUpListener = (FinishSignUpListener) activity;
+        } catch (ClassCastException e) {}
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mFinishSignUpListener = null;
+    }
+
 
 
 

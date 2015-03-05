@@ -18,11 +18,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.GridView;
+import android.widget.Toast;
+
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 
 import es.molestudio.photochop.R;
-import es.molestudio.photochop.controller.DataStorage;
+import es.molestudio.photochop.controller.DataBaseManagerWrap;
+import es.molestudio.photochop.controller.ImageManager;
+import es.molestudio.photochop.controller.ImageManagerImpl;
 import es.molestudio.photochop.controller.Images;
 import es.molestudio.photochop.controller.activity.ImageActivity;
 import es.molestudio.photochop.controller.activity.SwipeGalleryActivity;
@@ -52,6 +57,7 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
     private ActionBar mActionBar;
     private int mSelectedItemsCount;
     private boolean mShowHiddenImages = false;
+    private int mCounter;
 
 
     public static Fragment newInstance(Bundle args) {
@@ -74,6 +80,7 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
         }
 
         setHasOptionsMenu(true);
+        setRetainInstance(true);
    }
 
 
@@ -82,6 +89,11 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
         super.onCreateView(inflater, container, savedInstanceState);
 
         View root = inflater.inflate(R.layout.fragment_grid, container, false);
+
+        // Comprobar en las preferencias si ya existe algo, si no, se queda en blanco
+        SharedPreferences settings = getActivity().getSharedPreferences(Constants.TAG_PREFERENCES, 0);
+        mShowHiddenImages = settings.getBoolean(Constants.TAG_SHOW_HIDDEN, false);
+
 
         mActionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
 
@@ -100,7 +112,7 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
             getImagesFromGalleryTask.execute();
         } else {
             // Images From BD
-            updateImagesFromBD(false);
+            showHiddenImages();
         }
 
         return root;
@@ -134,11 +146,10 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
         }
     }
 
-
+    // GetImagesFromGalleryTask.ImageReaderListener implementation
     @Override
-    public void onFinish(ArrayList<Image> images) {
+    public void onFinishReadFromGallery(ArrayList<Image> images) {
         updateImages(images);
-
     }
 
     // ADPGridImage.ItemSelectorListener implementation
@@ -216,7 +227,7 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
 
     private void importImagesToBD() {
 
-        ArrayList<Image> newImages = DataStorage.getDataStorage(getActivity()).insertImages(mADPGridImage.getSelectedImages());
+        ArrayList<Image> newImages = DataBaseManagerWrap.getDataBaseManager(getActivity()).insertImages(mADPGridImage.getSelectedImages());
 
         if (newImages.size() > 0) {
             Intent returnIntent = new Intent();
@@ -229,19 +240,46 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
     }
 
     private void deleteImagesFromBD() {
-        DataStorage.getDataStorage(getActivity()).deleteImages(mADPGridImage.getSelectedImages());
+        DataBaseManagerWrap.getDataBaseManager(getActivity()).deleteImages(mADPGridImage.getSelectedImages());
+        updateImagesFromBD(false);
     }
 
     private void setHiddenforSelectedImages(boolean hide) {
 
-        ArrayList<Image> hiddenImages = new ArrayList<Image>();
-        for (Image image: mADPGridImage.getSelectedImages()) {
-            image.setHidden(hide);
-            hiddenImages.add(image);
+        if (ParseUser.getCurrentUser() == null) {
+            Toast.makeText(getActivity(), getString(R.string.txt_error_user_not_logged), Toast.LENGTH_LONG).show();
+            return;
         }
-        DataStorage.getDataStorage(getActivity()).updateImages(hiddenImages);
 
-        showHiddenImages();
+        ImageManager imageManager = new ImageManagerImpl(getActivity());
+
+        mCounter = 0;
+
+        for (Image image: mADPGridImage.getSelectedImages()) {
+            if (hide) {
+                imageManager.hideImage(image, new ImageManager.ImageManagerListener() {
+                    @Override
+                    public void onFinish(Image image, Exception err) {
+                        mCounter++;
+                        if (mCounter == mADPGridImage.getSelectedImages().size()) {
+                            showHiddenImages();
+                        }
+                    }
+                });
+            } else {
+
+                imageManager.showImage(image, new ImageManager.ImageManagerListener() {
+                    @Override
+                    public void onFinish(Image image, Exception err) {
+                        mCounter++;
+                        if (mCounter == mADPGridImage.getSelectedImages().size()) {
+                            showHiddenImages();
+                        }
+                    }
+                });
+            }
+        }
+
     }
 
 
@@ -271,12 +309,8 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
-
             if (requestCode == SwipeGalleryActivity.RQ_CHANGE_IMAGES) {
-
-                if (data != null && data.getBooleanExtra(SwipeGalleryActivity.DELETE_IMAGES_ON_BD, false) == true) {
-                    updateImagesFromBD(false);
-                }
+                updateImagesFromBD(false);
             }
         }
     }
@@ -313,30 +347,23 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_grid_fragment, menu);
-
-        // Comprobar en las preferencias si ya existe algo, si no, se queda en blanco
-        SharedPreferences settings = getActivity().getSharedPreferences(Constants.TAG_PREFERENCES, 0);
-        boolean showHiddenImages = settings.getBoolean(Constants.TAG_SHOW_HIDDEN, false);
-
-        mShowHiddenImages = showHiddenImages;
-
-        getActivity().invalidateOptionsMenu();
-
+        if (!mSelectImagesFromGallery) {
+            inflater.inflate(R.menu.menu_grid_fragment, menu);
+        }
     }
 
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-
-         // If true: las imagenes se ven
-        if (mShowHiddenImages) {
-            menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_visibility_off_white_24dp));
-        } else {
-            menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_visibility_white_24dp));
+        if (!mSelectImagesFromGallery) {
+            // If true: las imagenes se ven
+            if (mShowHiddenImages) {
+                menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_visibility_off_white_24dp));
+            } else {
+                menu.getItem(0).setIcon(getResources().getDrawable(R.drawable.ic_visibility_white_24dp));
+            }
         }
-
     }
 
     private void showHiddenImages() {
@@ -356,11 +383,6 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
             Images.reloadImages(visibleImages);
             updateImages(visibleImages);
         }
-
-
-
-
-
     }
 
 

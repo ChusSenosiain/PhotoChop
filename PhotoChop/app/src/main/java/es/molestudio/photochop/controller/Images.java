@@ -16,14 +16,14 @@ public class Images {
     public static synchronized ArrayList<Image> getInstance(Context context) {
 
         if (mImages == null) {
-            mImages = DataStorage.getDataStorage(context).getImages();
+            mImages = DataBaseManagerWrap.getDataBaseManager(context).getImages();
         }
 
         return mImages;
     }
 
     public static synchronized ArrayList<Image> reloadImagesFromBD(Context context) {
-        mImages = DataStorage.getDataStorage(context).getImages();
+        mImages = DataBaseManagerWrap.getDataBaseManager(context).getImages();
         return mImages;
     }
 

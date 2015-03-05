@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -16,10 +18,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -33,11 +35,13 @@ import com.parse.ParseUser;
 import java.util.Date;
 
 import es.molestudio.photochop.R;
-import es.molestudio.photochop.controller.DataStorage;
-import es.molestudio.photochop.controller.ILoginManager;
+import es.molestudio.photochop.View.AppTextView;
+import es.molestudio.photochop.controller.DataBaseManagerWrap;
 import es.molestudio.photochop.controller.LoginManager;
+import es.molestudio.photochop.controller.LoginManagerWrap;
 import es.molestudio.photochop.controller.adapter.ADPDrawer;
 import es.molestudio.photochop.controller.fragment.GridFragment;
+import es.molestudio.photochop.controller.fragment.SignInFragment;
 import es.molestudio.photochop.controller.location.MyLocation;
 import es.molestudio.photochop.controller.util.Log;
 import es.molestudio.photochop.model.Image;
@@ -48,7 +52,7 @@ public class MainActivity extends ActionBarActivity
         implements View.OnClickListener,
         ListView.OnItemClickListener,
         MyLocation.ChangeLocationListener,
-        ILoginManager.LoginActionListener {
+        LoginManager.LoginActionListener {
 
 
     private static final int RQ_CAPTURE_IMAGE = 1001;
@@ -62,6 +66,11 @@ public class MainActivity extends ActionBarActivity
     private ActionBarDrawerToggle mDrawerToggle;
     private FloatingActionsMenu mFloatingActionsMenu;
     private GridFragment mGridFragment;
+
+
+    private ImageView mIvUserImage;
+    private AppTextView mtvUserName;
+    private AppTextView mtvSubtitle;
 
 
     @Override
@@ -103,9 +112,6 @@ public class MainActivity extends ActionBarActivity
 
         // Left Drawer items
 
-        // User item
-        RelativeLayout rlUserData = (RelativeLayout) findViewById(R.id.user_data_holder);
-        rlUserData.setOnClickListener(this);
 
         // List items
         String[] drawerMenuItems = getResources().getStringArray(R.array.drawer_main_items);
@@ -141,6 +147,17 @@ public class MainActivity extends ActionBarActivity
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+        // User Data frame layout
+        mIvUserImage = (ImageView) findViewById(R.id.iv_user_image);
+        mtvUserName = (AppTextView) findViewById(R.id.tv_user_nickname);
+        mtvSubtitle = (AppTextView) findViewById(R.id.tv_subtitle);
+
+        RelativeLayout rlUserData = (RelativeLayout) findViewById(R.id.user_data_holder);
+        rlUserData.setOnClickListener(this);
+
+        loadUserData();
+
+
         mFloatingActionsMenu = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
         FloatingActionButton btnCamera = (FloatingActionButton) findViewById(R.id.btn_new_photo);
         FloatingActionButton btnImportFromGallery = (FloatingActionButton) findViewById(R.id.btn_import_from_gallery);
@@ -149,6 +166,23 @@ public class MainActivity extends ActionBarActivity
         btnCamera.setOnClickListener(this);
         btnImportFromGallery.setOnClickListener(this);
         mDrawerList.setOnItemClickListener(this);
+
+    }
+
+    private void loadUserData() {
+
+        if (ParseUser.getCurrentUser() != null) {
+            mtvUserName.setText(ParseUser.getCurrentUser().getString("nickname"));
+            mtvSubtitle.setText("");
+        } else {
+
+            mtvUserName.setText(getString(R.string.tv_user_nickname_default));
+            mtvSubtitle.setText(getString(R.string.app_name));
+
+            Drawable drawable = getResources().getDrawable(R.drawable.ic_account_circle_white_48dp);
+            drawable.setColorFilter(getResources().getColor(R.color.light_primary_color), PorterDuff.Mode.MULTIPLY);
+            mIvUserImage.setImageDrawable(drawable);
+        }
 
     }
 
@@ -219,7 +253,7 @@ public class MainActivity extends ActionBarActivity
 
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK && data != null) {
             // Photo
             if (requestCode == RQ_CAPTURE_IMAGE) {
                 finishLocationService();
@@ -228,11 +262,14 @@ public class MainActivity extends ActionBarActivity
             }
             // Import Image(s) from gallery
             else if (requestCode == GalleryActivity.RQ_SELECT_IMAGE) {
-                if (data != null) {
-                    boolean newImages = data.getBooleanExtra(GridFragment.NEW_IMAGES_ON_BD, false);
-                    if (newImages){
-                        mGridFragment.updateImagesFromBD(true);
-                    }
+                boolean newImages = data.getBooleanExtra(GridFragment.NEW_IMAGES_ON_BD, false);
+                if (newImages){
+                    mGridFragment.updateImagesFromBD(true);
+                }
+            } else if (requestCode == LogInActivity.RQ_LOGGIN) {
+                boolean loginOK = data.getBooleanExtra(SignInFragment.LOGIN_OK, false);
+                if (loginOK) {
+                    loadUserData();
                 }
             }
         }
@@ -265,7 +302,7 @@ public class MainActivity extends ActionBarActivity
             image.setImageLongitude(0.0);
         }
 
-        DataStorage.getDataStorage(this).insertImage(image);
+        DataBaseManagerWrap.getDataBaseManager(this).insertImage(image);
 
     }
 
@@ -298,7 +335,7 @@ public class MainActivity extends ActionBarActivity
                 break;
             // About
             case 1:
-                // TODO: create about dialog
+                showAbout();
                 break;
             // Logout
             case 2:
@@ -310,8 +347,15 @@ public class MainActivity extends ActionBarActivity
     private void logOut() {
 
         if (ParseUser.getCurrentUser() != null) {
-            LoginManager.getLoginManager(this).signOut(this);
+            LoginManagerWrap.getLoginManager(this).signOut(this);
+        } else {
+            Toast.makeText(this, getString(R.string.message_logout_with_no_loggin), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void showAbout() {
+        Intent aboutIntent = new Intent(MainActivity.this, AboutActivity.class);
+        startActivity(aboutIntent);
     }
 
     private void selectItem(int position) {
@@ -349,6 +393,7 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onDone(User user, Exception error) {
         if (error == null) {
+            loadUserData();
             Toast.makeText(this, getString(R.string.user_logout_ok), Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, getString(R.string.user_logout_error), Toast.LENGTH_SHORT).show();

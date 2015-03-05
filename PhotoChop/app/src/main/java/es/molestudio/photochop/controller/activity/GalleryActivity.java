@@ -26,7 +26,7 @@ public class GalleryActivity extends ActionBarActivity {
 
         // Set up toolbar
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("");
+        actionBar.setTitle(getString(R.string.Gallery_title));
         // enable ActionBar app icon to behave as action to toggle nav drawer
         actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -42,12 +42,6 @@ public class GalleryActivity extends ActionBarActivity {
                     .commit();
         }
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_activity_test, menu);
-        return true;
     }
 
     @Override

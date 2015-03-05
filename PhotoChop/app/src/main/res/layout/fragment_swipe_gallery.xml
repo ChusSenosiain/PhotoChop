@@ -1,0 +1,118 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="es.molestudio.photochop.controller.fragment.SwipeGalleryFragment">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_images"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </android.support.v4.view.ViewPager>
+
+
+
+    <LinearLayout
+        android:id="@+id/image_data_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:background="@color/image_text_background"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="5dp">
+
+            <es.molestudio.photochop.View.AppTextView
+                android:layout_weight="1"
+                android:id="@+id/image_name"
+                style="@style/AppTextField.Regular.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Image Name"
+                android:textColor="@android:color/white"
+                android:maxLines="2"
+                android:lines="2"
+                android:ellipsize="end"/>
+
+            <es.molestudio.photochop.View.AppTextView
+                android:layout_weight="1"
+                android:id="@+id/image_date"
+                style="@style/AppTextField.Regular.Medium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="Mie. 28 Feb 2008 \n 14:35"
+                android:textColor="@android:color/white"
+                android:maxLines="2"
+                android:lines="2"
+                android:ellipsize="end"/>
+
+        </LinearLayout>
+
+
+
+        <RelativeLayout
+            android:id="@+id/action_buttons_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+
+            <ImageView
+                android:id="@+id/iv_delete"
+                style="@style/AppImageIcon.Big"
+                android:src="@drawable/ic_delete_white_24dp"
+                android:layout_margin="15dp"
+                />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="right"
+                android:layout_toRightOf="@id/iv_delete">
+
+
+                <ImageView
+                    android:id="@+id/iv_share"
+                    style="@style/AppImageIcon.Big"
+                    android:src="@drawable/ic_share_white_24dp"
+                    android:layout_margin="15dp"/>
+
+                <ImageView
+                    android:id="@+id/iv_localize"
+                    style="@style/AppImageIcon.Big"
+                    android:src="@drawable/ic_place_white_24dp"
+                    android:layout_margin="15dp"/>
+
+                <ImageView
+                    android:id="@+id/iv_edit"
+                    style="@style/AppImageIcon.Big"
+                    android:src="@drawable/ic_create_white_24dp"
+                    android:layout_margin="15dp"/>
+
+                <ImageView
+                    android:id="@+id/iv_favorite"
+                    style="@style/AppImageIcon.Big"
+                    android:src="@drawable/ic_favorite_white_24dp"
+                    android:layout_margin="15dp"/>
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

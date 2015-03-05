@@ -90,8 +90,8 @@ public class AppUtils {
 
     public static String[] dateToStringInLetters(Date date) {
 
-        String formatDate = null;
-        String formatTime = null;
+        String formatDate = "";
+        String formatTime = "";
 
         String returnDate[] = {null, null};
 
@@ -113,6 +113,14 @@ public class AppUtils {
 
             formatTime = new SimpleDateFormat("HH:mm").format(date);
 
+            if (formatDate == null) {
+                formatDate = "";
+            }
+
+            if (formatTime == null) {
+                formatTime = "";
+            }
+
             returnDate[0] = formatDate;
             returnDate[1] = formatTime;
 
@@ -125,19 +133,7 @@ public class AppUtils {
     }
 
 
-    public static String getRealPathFromURI(Context context, Uri contentURI) {
-        String result;
-        Cursor cursor = context.getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) { // Source is Dropbox or other similar local file path
-            result = contentURI.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            result = cursor.getString(idx);
-        }
-        cursor.close();
-        return result;
-    }
+
 
 
 
