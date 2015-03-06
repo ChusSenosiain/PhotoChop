@@ -3,6 +3,6 @@
 
     <item android:drawable="@android:color/transparent" android:state_activated="false"/>
     <item android:drawable="@android:color/transparent" android:state_pressed="true"/>
-    <item android:drawable="@color/material_amber" android:state_activated="true"/>
+    <item android:drawable="@android:color/transparent" android:state_activated="true"/>
 
 </selector>

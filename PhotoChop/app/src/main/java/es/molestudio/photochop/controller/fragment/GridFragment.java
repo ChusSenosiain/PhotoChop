@@ -1,6 +1,8 @@
 package es.molestudio.photochop.controller.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.parse.ParseUser;
@@ -25,6 +28,7 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 
 import es.molestudio.photochop.R;
+import es.molestudio.photochop.View.AppTextView;
 import es.molestudio.photochop.controller.DataBaseManagerWrap;
 import es.molestudio.photochop.controller.ImageManager;
 import es.molestudio.photochop.controller.ImageManagerImpl;
@@ -58,6 +62,9 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
     private int mSelectedItemsCount;
     private boolean mShowHiddenImages = false;
     private int mCounter;
+    private int mCounterSelected;
+    private ProgressBar mProgressBar;
+    private AppTextView mTvNoImages;
 
 
     public static Fragment newInstance(Bundle args) {
@@ -90,14 +97,17 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
 
         View root = inflater.inflate(R.layout.fragment_grid, container, false);
 
-        // Comprobar en las preferencias si ya existe algo, si no, se queda en blanco
+        // Preferences: show or hide secret images
         SharedPreferences settings = getActivity().getSharedPreferences(Constants.TAG_PREFERENCES, 0);
         mShowHiddenImages = settings.getBoolean(Constants.TAG_SHOW_HIDDEN, false);
 
 
         mActionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        mTvNoImages = (AppTextView) root.findViewById(R.id.tv_no_images);
+
 
         mPhotoGrid = (GridView) root.findViewById(R.id.image_grid);
+        mProgressBar = (ProgressBar) root.findViewById(R.id.progressBar);
 
         mADPGridImage = new ADPGridImage(getActivity(), mPhotoGrid, this);
         mPhotoGrid.setAdapter(mADPGridImage);
@@ -105,6 +115,8 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
         mPhotoGrid.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE);
         mPhotoGrid.setOnItemLongClickListener(this);
         mPhotoGrid.setOnItemClickListener(this);
+
+        mTvNoImages.setVisibility(View.GONE);
 
         if (mSelectImagesFromGallery) {
             // Images From Gallery
@@ -210,12 +222,14 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
                 importImagesToBD();
                 break;
             case R.id.action_delete:
-                deleteImagesFromBD();
+                deleteImagesFromBD(mADPGridImage.getSelectedImages());
                 break;
             case R.id.action_hide:
+                mCounterSelected = mADPGridImage.getSelectedImages().size();
                 setHiddenforSelectedImages(true);
                 break;
             case R.id.action_show:
+                mCounterSelected = mADPGridImage.getSelectedImages().size();
                 setHiddenforSelectedImages(false);
                 break;
         }
@@ -225,8 +239,10 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
         return true;
     }
 
+    // Create images from gallery to BD
     private void importImagesToBD() {
 
+        mProgressBar.setVisibility(View.VISIBLE);
         ArrayList<Image> newImages = DataBaseManagerWrap.getDataBaseManager(getActivity()).insertImages(mADPGridImage.getSelectedImages());
 
         if (newImages.size() > 0) {
@@ -234,16 +250,36 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
             returnIntent.putExtra(NEW_IMAGES_ON_BD, true);
             getActivity().setResult(Activity.RESULT_OK, returnIntent);
         }
+        mProgressBar.setVisibility(View.GONE);
 
         getActivity().finish();
 
     }
 
-    private void deleteImagesFromBD() {
-        DataBaseManagerWrap.getDataBaseManager(getActivity()).deleteImages(mADPGridImage.getSelectedImages());
-        updateImagesFromBD(false);
+    // Delete images from DB
+    private void deleteImagesFromBD(final ArrayList<Image> images) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(getActivity().getString(R.string.delete_image_question))
+                .setTitle(getActivity().getString(R.string.delete_image));
+
+        builder.setPositiveButton(getActivity().getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mProgressBar.setVisibility(View.VISIBLE);
+                DataBaseManagerWrap.getDataBaseManager(getActivity()).deleteImages(images);
+                updateImagesFromBD(false);
+                mProgressBar.setVisibility(View.GONE);
+            }
+        });
+
+        builder.setNegativeButton(getActivity().getString(R.string.no), null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
+    // Hide or show the selected images
     private void setHiddenforSelectedImages(boolean hide) {
 
         if (ParseUser.getCurrentUser() == null) {
@@ -251,6 +287,7 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
             return;
         }
 
+        mProgressBar.setVisibility(View.VISIBLE);
         ImageManager imageManager = new ImageManagerImpl(getActivity());
 
         mCounter = 0;
@@ -261,8 +298,9 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
                     @Override
                     public void onFinish(Image image, Exception err) {
                         mCounter++;
-                        if (mCounter == mADPGridImage.getSelectedImages().size()) {
+                        if (mCounter == mCounterSelected) {
                             showHiddenImages();
+                            mProgressBar.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -272,8 +310,9 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
                     @Override
                     public void onFinish(Image image, Exception err) {
                         mCounter++;
-                        if (mCounter == mADPGridImage.getSelectedImages().size()) {
+                        if (mCounter == mCounterSelected) {
                             showHiddenImages();
+                            mProgressBar.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -292,6 +331,7 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
 
     }
 
+    // Load the images on Images singleton
     public void updateImagesFromBD(Boolean scrollToLastPosition) {
         updateImages(Images.reloadImagesFromBD(getActivity()));
         if (scrollToLastPosition) {
@@ -299,15 +339,24 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
         }
     }
 
+    // Update the gridview with the images
     private void updateImages(ArrayList<Image> images) {
+
         mADPGridImage.updateImages(images);
         mADPGridImage.notifyDataSetChanged();
+
+        if (mADPGridImage.getCount() == 0 && !mSelectImagesFromGallery) {
+            mTvNoImages.setVisibility(View.VISIBLE);
+        } else {
+            mTvNoImages.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // Select images from gallery
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SwipeGalleryActivity.RQ_CHANGE_IMAGES) {
                 updateImagesFromBD(false);
@@ -383,6 +432,7 @@ public class GridFragment extends Fragment implements GetImagesFromGalleryTask.I
             Images.reloadImages(visibleImages);
             updateImages(visibleImages);
         }
+
     }
 
 

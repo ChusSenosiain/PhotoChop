@@ -16,7 +16,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:src="@drawable/logo_secret"
+            android:src="@drawable/logo"
             android:layout_centerInParent="true"/>
 
 
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             style="@style/AppTextField.Light.Small"
             android:textColor="@android:color/white"
-            android:text="Your secret photo and the owner of this app, doesn't has responsability on the content that users can upload/show/hide/save/blah blah blah...with the app."/>
+            android:text="Your secret photo and the owner of this app, doesn't have any responsability on the content that users can upload/show/hide/save/blah blah blah...with the app."/>
 
 
     </LinearLayout>

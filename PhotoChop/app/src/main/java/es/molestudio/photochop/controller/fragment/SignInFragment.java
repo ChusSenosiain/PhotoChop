@@ -27,7 +27,7 @@ import es.molestudio.photochop.model.User;
 public class SignInFragment extends Fragment implements LoginManager.LoginActionListener,
         View.OnClickListener{
 
-    public static final String LOGIN_OK = "es.molestudio.photochop.controller.fragment.LOGIN_OK";
+    public static final String LOGIN_OK = "es.molestudio.photochop.controller.fragment.SignInFragment.LOGIN_OK";
 
 
     private AppEditText mEtEmail;
@@ -118,6 +118,8 @@ public class SignInFragment extends Fragment implements LoginManager.LoginAction
             getActivity().setResult(Activity.RESULT_OK, returnIntent);
             getActivity().finish();
         } else {
+
+            // TODO: codificar errores de login
             Toast.makeText(getActivity(), getString(R.string.sign_in_error), Toast.LENGTH_LONG).show();
         }
     }

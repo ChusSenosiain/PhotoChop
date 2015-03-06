@@ -17,6 +17,12 @@ import es.molestudio.photochop.controller.util.AppUtils;
 import es.molestudio.photochop.controller.util.ImageLoader;
 import es.molestudio.photochop.model.Image;
 
+/*
+    Shows the details of the image selected and the user can modify them.
+
+
+ */
+
 public class ImageDetailsActivity extends ActionBarActivity {
 
     public static final String EXTRA_IMAGE_ID = "es.molestudio.photochop.controller.activity.ImageDetailsActivity.IMAGE_ID";

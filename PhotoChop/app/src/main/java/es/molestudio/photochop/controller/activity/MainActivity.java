@@ -3,13 +3,10 @@ package es.molestudio.photochop.controller.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.net.Uri;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -32,11 +29,9 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.parse.ParseUser;
 
-import java.util.Date;
-
 import es.molestudio.photochop.R;
 import es.molestudio.photochop.View.AppTextView;
-import es.molestudio.photochop.controller.DataBaseManagerWrap;
+import es.molestudio.photochop.controller.ImageManagerImpl;
 import es.molestudio.photochop.controller.LoginManager;
 import es.molestudio.photochop.controller.LoginManagerWrap;
 import es.molestudio.photochop.controller.adapter.ADPDrawer;
@@ -44,7 +39,6 @@ import es.molestudio.photochop.controller.fragment.GridFragment;
 import es.molestudio.photochop.controller.fragment.SignInFragment;
 import es.molestudio.photochop.controller.location.MyLocation;
 import es.molestudio.photochop.controller.util.Log;
-import es.molestudio.photochop.model.Image;
 import es.molestudio.photochop.model.ObjectDrawerItem;
 import es.molestudio.photochop.model.User;
 
@@ -85,7 +79,7 @@ public class MainActivity extends ActionBarActivity
 
         // Set up toolbar
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("");
+        actionBar.setTitle(getString(R.string.app_name));
         // enable ActionBar app icon to behave as action to toggle nav drawer
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
@@ -109,8 +103,86 @@ public class MainActivity extends ActionBarActivity
         }
 
         // Set up the drawer
-
         // Left Drawer items
+        configLeftDrawer();
+
+        mFloatingActionsMenu = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
+        FloatingActionButton btnCamera = (FloatingActionButton) findViewById(R.id.btn_new_photo);
+        FloatingActionButton btnImportFromGallery = (FloatingActionButton) findViewById(R.id.btn_import_from_gallery);
+
+
+        btnCamera.setOnClickListener(this);
+        btnImportFromGallery.setOnClickListener(this);
+        mDrawerList.setOnItemClickListener(this);
+
+    }
+
+
+    /**
+     * Go to gallery: the default intent for choose an image doesn't allow to choose multiple images
+     * we have to create a custom selectable gallery
+     */
+    private void importFromGallery() {
+        mFloatingActionsMenu.collapse();
+        Intent imageGallery = new Intent(this, GalleryActivity.class);
+        startActivityForResult(imageGallery, GalleryActivity.RQ_SELECT_IMAGE);
+    }
+
+
+    /**
+     * Take a photo
+     */
+    private void takePhoto() {
+        mFloatingActionsMenu.collapse();
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, RQ_CAPTURE_IMAGE);
+        mMyLocation = new MyLocation(this, this);
+    }
+
+    /**
+     * About intent
+     */
+    private void showAbout() {
+        Intent aboutIntent = new Intent(MainActivity.this, AboutActivity.class);
+        startActivity(aboutIntent);
+    }
+
+
+
+    /**
+     * Load user data on drawer
+     */
+    private void loadUserData() {
+
+        if (ParseUser.getCurrentUser() != null) {
+            mtvUserName.setText(ParseUser.getCurrentUser().getString("nickname"));
+            mtvSubtitle.setText("");
+        } else {
+
+            mtvUserName.setText(getString(R.string.tv_user_nickname_default));
+            mtvSubtitle.setText(getString(R.string.app_name));
+
+            Drawable drawable = getResources().getDrawable(R.drawable.ic_account_circle_white_48dp);
+            drawable.setColorFilter(getResources().getColor(R.color.light_primary_color), PorterDuff.Mode.MULTIPLY);
+            mIvUserImage.setImageDrawable(drawable);
+        }
+
+    }
+
+    /**
+     * Config drawer
+     */
+    private void configLeftDrawer() {
+
+        // User Data frame layout
+        mIvUserImage = (ImageView) findViewById(R.id.iv_user_image);
+        mtvUserName = (AppTextView) findViewById(R.id.tv_user_nickname);
+        mtvSubtitle = (AppTextView) findViewById(R.id.tv_subtitle);
+
+        RelativeLayout rlUserData = (RelativeLayout) findViewById(R.id.user_data_holder);
+        rlUserData.setOnClickListener(this);
+
+        loadUserData();
 
 
         // List items
@@ -119,6 +191,7 @@ public class MainActivity extends ActionBarActivity
         drawerItems[0] = new ObjectDrawerItem(R.drawable.ic_settings_white_24dp, drawerMenuItems[0]);
         drawerItems[1] = new ObjectDrawerItem(R.drawable.ic_help_white_24dp, drawerMenuItems[1]);
         drawerItems[2] = new ObjectDrawerItem(R.drawable.ic_exit_to_app_white_24dp, drawerMenuItems[2]);
+
 
         ADPDrawer adpDrawer = new ADPDrawer(this, drawerItems);
 
@@ -147,66 +220,8 @@ public class MainActivity extends ActionBarActivity
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        // User Data frame layout
-        mIvUserImage = (ImageView) findViewById(R.id.iv_user_image);
-        mtvUserName = (AppTextView) findViewById(R.id.tv_user_nickname);
-        mtvSubtitle = (AppTextView) findViewById(R.id.tv_subtitle);
-
-        RelativeLayout rlUserData = (RelativeLayout) findViewById(R.id.user_data_holder);
-        rlUserData.setOnClickListener(this);
-
-        loadUserData();
-
-
-        mFloatingActionsMenu = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
-        FloatingActionButton btnCamera = (FloatingActionButton) findViewById(R.id.btn_new_photo);
-        FloatingActionButton btnImportFromGallery = (FloatingActionButton) findViewById(R.id.btn_import_from_gallery);
-
-
-        btnCamera.setOnClickListener(this);
-        btnImportFromGallery.setOnClickListener(this);
-        mDrawerList.setOnItemClickListener(this);
-
     }
 
-    private void loadUserData() {
-
-        if (ParseUser.getCurrentUser() != null) {
-            mtvUserName.setText(ParseUser.getCurrentUser().getString("nickname"));
-            mtvSubtitle.setText("");
-        } else {
-
-            mtvUserName.setText(getString(R.string.tv_user_nickname_default));
-            mtvSubtitle.setText(getString(R.string.app_name));
-
-            Drawable drawable = getResources().getDrawable(R.drawable.ic_account_circle_white_48dp);
-            drawable.setColorFilter(getResources().getColor(R.color.light_primary_color), PorterDuff.Mode.MULTIPLY);
-            mIvUserImage.setImageDrawable(drawable);
-        }
-
-    }
-
-
-    @Override
-    public void onClick(View v) {
-
-        switch (v.getId()) {
-            case R.id.btn_new_photo:
-                // Camera intent
-                takePhoto();
-                break;
-
-            case R.id.btn_import_from_gallery:
-                // Gallery intent
-                importFromGallery();
-                break;
-
-            case R.id.user_data_holder:
-                // User config or login
-                userConfig();
-                break;
-        }
-    }
 
     /**
      * If the user is logged, go to user config.
@@ -226,28 +241,6 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    /**
-     * Go to gallery: the default intent for choose an image doesn't allow to choose multiple images
-     * we have to create a custom selectable gallery
-     */
-    private void importFromGallery() {
-        mFloatingActionsMenu.collapse();
-        Intent imageGallery = new Intent(this, GalleryActivity.class);
-        startActivityForResult(imageGallery, GalleryActivity.RQ_SELECT_IMAGE);
-    }
-
-
-    /**
-     * Take a photo
-     */
-    private void takePhoto() {
-        mFloatingActionsMenu.collapse();
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, RQ_CAPTURE_IMAGE);
-        mMyLocation = new MyLocation(this, this);
-    }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -257,7 +250,7 @@ public class MainActivity extends ActionBarActivity
             // Photo
             if (requestCode == RQ_CAPTURE_IMAGE) {
                 finishLocationService();
-                saveImage(data.getData());
+                new ImageManagerImpl(this).saveNewImageOnBD(data.getData(), mLocation);
                 mGridFragment.updateImagesFromBD(true);
             }
             // Import Image(s) from gallery
@@ -276,76 +269,19 @@ public class MainActivity extends ActionBarActivity
 
     }
 
-
     /**
-     * Save the image on BD
-     * @param imageUri
+     * Finish the location service
      */
-    private void saveImage(Uri imageUri) {
-
-        Image image = new Image();
-        image.setImageUri(imageUri);
-        image.setImageDate(new Date());
-
-        // Obtengo el nombre de la imagen
-        Cursor cursor = this.getContentResolver().query(image.getImageUri(), null, null, null, null);
-        cursor.moveToFirst();
-        image.setImageName(cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
-        cursor.close();
-
-
-        if (mLocation != null) {
-            image.setImageLatitude(mLocation.getLatitude());
-            image.setImageLongitude(mLocation.getLongitude());
-        } else {
-            image.setImageLatitude(0.0);
-            image.setImageLongitude(0.0);
-        }
-
-        DataBaseManagerWrap.getDataBaseManager(this).insertImage(image);
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        mLocation = location;
-        Log.d("Location received " + location.getLatitude() + " " + location.getLongitude());
-    }
-
     private void finishLocationService() {
         if (mMyLocation != null) {
             mMyLocation.stopLocationService();
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        finishLocationService();
-    }
-
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-        selectItem(position);
-        switch (position) {
-            // TODO: Preferences
-            case 0:
-                break;
-            // About
-            case 1:
-                showAbout();
-                break;
-            // Logout
-            case 2:
-                logOut();
-                break;
-        }
-    }
-
+    /**
+     * Logout
+     */
     private void logOut() {
-
         if (ParseUser.getCurrentUser() != null) {
             LoginManagerWrap.getLoginManager(this).signOut(this);
         } else {
@@ -353,14 +289,20 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    private void showAbout() {
-        Intent aboutIntent = new Intent(MainActivity.this, AboutActivity.class);
-        startActivity(aboutIntent);
-    }
-
+    /**
+     * Select item from drawer
+      * @param position
+     */
     private void selectItem(int position) {
         mDrawerList.setItemChecked(position, true);
         mDrawerLayout.closeDrawer(mDrawerLinearLayout);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        finishLocationService();
     }
 
 
@@ -390,6 +332,61 @@ public class MainActivity extends ActionBarActivity
     }
 
 
+    ////////////////////////////////////////////////////////////////////
+    // INTERFACE IMPLEMENTATION
+    ////////////////////////////////////////////////////////////////////
+
+    // View.OnClickListener
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.btn_new_photo:
+                // Camera intent
+                takePhoto();
+                break;
+
+            case R.id.btn_import_from_gallery:
+                // Gallery intent
+                importFromGallery();
+                break;
+
+            case R.id.user_data_holder:
+                // User config or login
+                userConfig();
+                break;
+        }
+    }
+
+    // MyLocation.ChangeLocationListener
+    @Override
+    public void onLocationChanged(Location location) {
+        mLocation = location;
+        Log.d("Location received " + location.getLatitude() + " " + location.getLongitude());
+    }
+
+    // ListView.OnItemClickListener
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        selectItem(position);
+        switch (position) {
+            // TODO: Preferences
+            case 0:
+                Toast.makeText(this, "Under Construction :)", Toast.LENGTH_LONG).show();
+                break;
+            // About
+            case 1:
+                showAbout();
+                break;
+            // Logout
+            case 2:
+                logOut();
+                break;
+        }
+    }
+
+    // LoginManager.LoginActionListener (for logout)
     @Override
     public void onDone(User user, Exception error) {
         if (error == null) {

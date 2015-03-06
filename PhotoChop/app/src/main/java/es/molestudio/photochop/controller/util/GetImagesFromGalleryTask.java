@@ -45,7 +45,7 @@ public class GetImagesFromGalleryTask extends AsyncTask<Void, ArrayList<Image>, 
         final String orderBy = MediaStore.Images.Media.DATE_TAKEN;
 
         // SD Card
-        Cursor result = mContext.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, this.mColumns, null, null, orderBy + " DESC");
+        Cursor result = mContext.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, mColumns, null, null, orderBy + " DESC");
         if (result.moveToFirst()) {
             do {
 

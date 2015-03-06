@@ -25,7 +25,7 @@ import es.molestudio.photochop.model.User;
 public class LogInActivity extends ActionBarActivity implements
     SignUpFragment.FinishSignUpListener {
 
-    public static final int RQ_LOGGIN = 1004;
+    public static final int RQ_LOGGIN = 2564;
 
     private PagerSlidingTabStrip mTabs;
     private ViewPager mViewPager;
@@ -44,16 +44,10 @@ public class LogInActivity extends ActionBarActivity implements
 
         // Set up toolbar
         mActionBar = getSupportActionBar();
-        mActionBar.setTitle("");
+        mActionBar.setTitle(getString(R.string.app_name));
         // enable ActionBar to have a custom layout
-        mActionBar.setDisplayShowCustomEnabled(true);
         mActionBar.setDisplayHomeAsUpEnabled(true);
 
-        View view = getLayoutInflater().inflate(R.layout.action_bar_title_center, null);
-        AppTextView tvTitle = (AppTextView) view.findViewById(R.id.tv_title);
-        tvTitle.setText("Your Secret Photo");
-
-        mActionBar.setCustomView(view);
 
         mTabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         mViewPager = (ViewPager) findViewById(R.id.pager);

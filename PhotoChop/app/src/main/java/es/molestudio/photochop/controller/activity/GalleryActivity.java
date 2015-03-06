@@ -5,12 +5,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import es.molestudio.photochop.R;
 import es.molestudio.photochop.controller.fragment.GridFragment;
 
+/*
+    SHOWS THE USER IMAGE GALLERY
+ */
 public class GalleryActivity extends ActionBarActivity {
 
     public static final Integer RQ_SELECT_IMAGE = 1004;
@@ -24,10 +26,8 @@ public class GalleryActivity extends ActionBarActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tb_toolbar);
         setSupportActionBar(toolbar);
 
-        // Set up toolbar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(getString(R.string.Gallery_title));
-        // enable ActionBar app icon to behave as action to toggle nav drawer
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         FragmentManager manager = getSupportFragmentManager();

@@ -37,7 +37,7 @@ public class LoginManagerWithParse implements LoginManager {
 
         try {
 
-            ParseUser.logInInBackground(user.getUserEmail(), user.getUserPassword(), new LogInCallback() {
+            ParseUser.logInInBackground(user.getUserEmail().trim(), user.getUserPassword().trim(), new LogInCallback() {
                 @Override
                 public void done(ParseUser parseUser, ParseException e) {
 

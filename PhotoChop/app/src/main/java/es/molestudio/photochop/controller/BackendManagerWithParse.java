@@ -1,16 +1,17 @@
 package es.molestudio.photochop.controller;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
+import android.text.format.DateFormat;
 
 import com.google.common.io.Files;
 
 import com.parse.CountCallback;
-import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -22,8 +23,8 @@ import com.parse.SaveCallback;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
-import java.util.List;
 
+import es.molestudio.photochop.controller.util.Log;
 import es.molestudio.photochop.model.Image;
 
 /**
@@ -50,22 +51,20 @@ public class BackendManagerWithParse implements BackendManager {
                     // The image does't exist
                     if (err == null && count == 0) {
                         try {
-
                             // Save the image
-
+                            Log.d("The image doesn't exists, create it!");
                             // Get the image file
                             byte[] fileData = Files.toByteArray(new File(image.getImageUri().getPath()));
                             ParseFile parseFile = new ParseFile("image", fileData);
 
                             parseImage.put("image", parseFile);
                             parseImage.put("userId", ParseUser.getCurrentUser().getObjectId());
-                            parseImage.put("internalId", image.getImageInternalId());
+                            parseImage.put("internalId", String.valueOf(image.getImageInternalId()));
 
                             parseImage.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
-
-                                    if (e != null) {
+                                    if (e == null) {
                                         image.setImageBackendId(parseImage.getObjectId());
                                         listener.onDone(image, null);
                                     } else {
@@ -102,19 +101,22 @@ public class BackendManagerWithParse implements BackendManager {
     @Override
     public void getImage(final Image image, final BackendImageListener listener) {
 
+        Log.d("Obtain the image...");
+
         try {
             ParseQuery<ParseObject> getImage = ParseQuery.getQuery("Image");
-            getImage.whereEqualTo("internalId", image.getImageInternalId());
+            getImage.whereEqualTo("internalId", String.valueOf(image.getImageInternalId()));
             getImage.whereEqualTo("userId", ParseUser.getCurrentUser().getObjectId());
 
-            getImage.findInBackground(new FindCallback<ParseObject>() {
-                @Override
-                public void done(List<ParseObject> parseObjects, ParseException e) {
 
-                    if (e != null) {
-                        for (int i = 0; i < parseObjects.size(); i++) {
-                            downloadImage(parseObjects.get(i), listener);
-                        }
+
+            getImage.getFirstInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject parseObject, ParseException e) {
+
+                    Log.d("Finish find in background!");
+                    if (e == null && parseObject != null)  {
+                        downloadImage(parseObject, listener);
                     } else {
                         listener.onDone(null, e);
                     }
@@ -174,13 +176,15 @@ public class BackendManagerWithParse implements BackendManager {
 
         try {
 
+            Log.d("Download the image...");
             ParseFile parseFile = (ParseFile) parseImage.get("image");
             parseFile.getDataInBackground(new GetDataCallback() {
                 @Override
                 public void done(byte[] bytes, ParseException e) {
-                    if (e != null) {
+                    if (e == null) {
+                        Log.d("Image downloaded!");
                         Image image = saveImageFile(bytes);
-                        if (image.getImageInternalId() > 0) {
+                        if (image != null) {
                             listener.onDone(image, null);
                         } else {
                             listener.onDone(null, new Exception("Cant' create the image!"));
@@ -205,35 +209,49 @@ public class BackendManagerWithParse implements BackendManager {
 
         try {
             File sdCardDirectory = Environment.getExternalStorageDirectory();
-            File file = new File(sdCardDirectory, new Date().toString() + ".jpg");
+            File file = new File(sdCardDirectory, DateFormat.format("yyyy-MM-dd_kk-mm-ss", new Date().getTime()) + ".jpg");
             FileOutputStream fos = new FileOutputStream(file.getPath());
             fos.write(bytes);
             fos.close();
 
+            // Save it on media store
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+            values.put(MediaStore.MediaColumns.DATA, file.getPath());
+            mContext.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
             // Obtengo el nombre de la imagen
-            // SD Card
+            String[] columns = {MediaStore.Images.Media.DATA,
+                    MediaStore.Images.Media._ID};
 
-            String[] mColumns = {MediaStore.Images.Media._ID};
             Long id = null;
-            Cursor result = mContext.getContentResolver().query(Uri.fromFile(file), mColumns, null, null, null);
+            Cursor result = mContext.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns, MediaStore.Images.Media.DATA + "=?", new String[] {file.getPath()}, null);
             if (result.moveToFirst()) {
                 do {
-                    id = result.getLong(result.getColumnIndex(mColumns[0]));
+                    id = result.getLong(result.getColumnIndex(columns[1]));
+                    Log.d("Image id: " + id);
+
                 } while (result.moveToNext());
             }
             result.close();
 
+            if (id != null) {
+                // Obtener uri y nuevo internal id
+                image = new Image();
+                image.setHidden(false);
+                image.setImageUri(Uri.fromFile(file));
+                image.setImageInternalId(id);
 
-            // Obtener uri y nuevo internal id
+                Log.d("Image Saved!");
+            } else {
+                Log.d("ERROR can't save the image! We cannot obtain the id from MediaStore :(");
+            }
 
-            image = new Image();
-            image.setHidden(false);
-            image.setImageUri(Uri.fromFile(file));
-            image.setImageInternalId(id);
+        } catch (Exception e) {
+            Log.d("Can't create the image on SD card: " + e.toString());
 
-
-        } catch (Exception e) {}
+        }
 
         return image;
 
