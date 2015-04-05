@@ -15,6 +15,7 @@ import java.util.Map;
 
 import es.molestudio.photochop.R;
 import es.molestudio.photochop.controller.util.ImageLoader;
+import es.molestudio.photochop.controller.util.Log;
 import es.molestudio.photochop.model.Image;
 
 /**
@@ -93,21 +94,10 @@ public class ADPGridImage extends BaseAdapter  {
         GridView gridView = (GridView) mView;
         if (gridView != null) {
 
-            int firstVisibleItem = gridView.getFirstVisiblePosition();
-            int lastVisibleItem = gridView.getLastVisiblePosition();
-
-            for (int i = firstVisibleItem; i <= lastVisibleItem; i++) {
+            for (int i = 0; i <= gridView.getLastVisiblePosition() - gridView.getFirstVisiblePosition(); i ++) {
                 View view = gridView.getChildAt(i);
-
-                if (view != null) {
-                    CheckBox chk = (CheckBox) view.findViewById(R.id.chk_selection);
-                    chk.setVisibility(mIsInSelectionMode ? View.VISIBLE : View.INVISIBLE);
-                } else {
-                    // TODO: apaño hasta ver porque no ve los hijos del grid
-                    notifyDataSetChanged();
-                    break;
-                }
-
+                CheckBox chk = (CheckBox) view.findViewById(R.id.chk_selection);
+                chk.setVisibility(mIsInSelectionMode ? View.VISIBLE : View.INVISIBLE);
             }
         }
     }
